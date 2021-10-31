@@ -2,45 +2,29 @@
 import { jsx, css } from '@emotion/react'
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
-
+import { useDispatch } from 'react-redux';
+import { loginAction } from '../../reducers';
 import {
   Form,
   Input,
   Button,
-  DatePicker,
 } from 'antd';
-import ChattingForm from './ChattingForm';
+import useInput from '../../hooks/useInput';
 
 const buttonStyle = css`
     margin-top: 20px;
 `;
 
 const LoginForm = ( {setIsLoggedIn }) => {
-    const [id, setId] = useState('');
-    const [password, setPassword] = useState('');
-    // const [passwordCheck, setPasswordCheck] = useState('');
-    // const [birthDate, setBirthDate] = useState('');
+    const dispatch = useDispatch();
+    const [id, onChangeId] = useInput('');
+    const [password, onChangePassword] = useInput('');
 
     const onSubmitForm = useCallback((e) => {
         console.log(id, password);
-        setIsLoggedIn(true);
+        dispatch(loginAction({id,password}));
     }, [id,password]);
 
-    const onChangeId = useCallback((e) => {
-      setId(e.target.value);
-    }, []);
-
-    const onChangePassword = useCallback((e) => {
-      setPassword(e.target.value);
-    }, []);
-
-    const onChangePasswordCheck = useCallback((e) => {
-        setPasswordCheck(e.target.value);
-    }, []);
-
-    // const onChangeBirthdate = useCallback((date, dateString) => {
-    //     console.log(dateString);
-    // }, []);
     return (
     <>
         <Form onFinish={onSubmitForm}> 
@@ -62,6 +46,5 @@ const LoginForm = ( {setIsLoggedIn }) => {
     </>
   );
 };
-
 
 export default LoginForm;

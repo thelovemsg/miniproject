@@ -16,9 +16,13 @@
     "@emotion/styled": "^11.3.0",
     "antd": "^4.16.13",
     "next": "^9.5.5",
+    "next-redux-wrapper": "^6.0.2",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-devtools-extension": "^2.13.9"
   },
   "devDependencies": {
     "eslint": "^8.1.0",

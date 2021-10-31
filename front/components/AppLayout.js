@@ -11,7 +11,7 @@ import LoginForm from '../components/rightComponent/LoginForm';
 import SearchForm from './headerComponent/SearchForm';
 import LeftSider from './leftComponent/LeftSider';
 import ChattingForm from './rightComponent/ChattingForm';
-
+import { useSelector} from 'react-redux';
 const contentStyle = css`
     margin-top:20px;
 `;
@@ -23,7 +23,8 @@ const rightComponentStyle = css`
 
 
 const AppLayout = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
     return (
         <Layout>
             <Header>
@@ -40,7 +41,8 @@ const AppLayout = ({ children }) => {
                         </Col>
                         <Col xs={24} md={6}>
                             <div css={rightComponentStyle}>
-                                {isLoggedIn ? <UserProfile setIsLoggedIn={setIsLoggedIn}/> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>} 
+                                {/* {isLoggedIn ? <UserProfile setIsLoggedIn={setIsLoggedIn}/> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}  */}
+                                {isLoggedIn ? <UserProfile /> : <LoginForm />} 
                                 <ChattingForm/>
                             </div>
                         </Col>
