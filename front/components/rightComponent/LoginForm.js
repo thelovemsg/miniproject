@@ -3,7 +3,7 @@ import { jsx, css } from '@emotion/react'
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { loginAction } from '../../reducers';
+import { loginAction } from '../../reducers/user';
 import {
   Form,
   Input,
