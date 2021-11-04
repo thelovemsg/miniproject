@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { jsx, css } from '@emotion/react'
+import { Global, jsx, css } from '@emotion/react'
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { Layout, Menu, Input, Select, Row, Col } from 'antd'; // 필요한 컴포넌트를 가져온다
@@ -21,12 +21,30 @@ const rightComponentStyle = css`
     height:100%;
 `;
 
+const globalStyle = css`
+    *{
+        .ant-row {
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        .ant-col:first-child {
+            padding-left: 0 !important;
+        }
+
+        .ant-col:last-child {
+            padding-right: 0 !important;
+        }
+    }
+`
 
 const AppLayout = ({ children }) => {
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
     const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+    console.log("isLoggedIn :: " , isLoggedIn)
     return (
         <Layout>
+            <Global style={globalStyle} />
             <Header>
                 <SearchForm />
             </Header>
@@ -46,6 +64,7 @@ const AppLayout = ({ children }) => {
                                 <ChattingForm/>
                             </div>
                         </Col>
+                                
                     </Row>
                 </Content>
             </Layout>
