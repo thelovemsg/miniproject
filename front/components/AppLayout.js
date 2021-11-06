@@ -40,8 +40,8 @@ const globalStyle = css`
 
 const AppLayout = ({ children }) => {
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-    console.log("isLoggedIn :: " , isLoggedIn)
+    const { me } = useSelector((state) => state.user);
+    console.log("me :: " , me)
     return (
         <Layout>
             <Global style={globalStyle} />
@@ -60,7 +60,7 @@ const AppLayout = ({ children }) => {
                         <Col xs={24} md={6}>
                             <div css={rightComponentStyle}>
                                 {/* {isLoggedIn ? <UserProfile setIsLoggedIn={setIsLoggedIn}/> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}  */}
-                                {isLoggedIn ? <UserProfile /> : <LoginForm />} 
+                                {me ? <UserProfile /> : <LoginForm />} 
                                 <ChattingForm/>
                             </div>
                         </Col>

@@ -8,6 +8,9 @@ export const initialState = {
     signUpLoading: false, // 회원가입 시도중
     signUpDone: false,
     signUpError: null,
+    changeNicknameLoading: false, // 닉네임 변경 시도중
+    changeNicknameDone: false,
+    changeNicknameError: null,
     me: null,
     signUpData: {},
     loginData: {},
@@ -25,6 +28,10 @@ export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
+export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
+export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
+export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
+
 export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
 export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
 export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
@@ -32,6 +39,9 @@ export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
 export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
+
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
 export const loginRequestAction = (data) => {
     return {
@@ -46,12 +56,12 @@ export const logoutRequestAction = (data) => {
 }
 
 const dummyUser = (data) => ({
-    ...action.data,
+    ...data,
     nickname: '선준찡',
     id: 1,
-    Post: [],
-    Followings: [],
-    Followers: [],
+    Posts: [{ id: 1 }],
+    Followings: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
+    Followers: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
 });
 
 const reducer = (state = initialState, action) => {
@@ -63,7 +73,7 @@ const reducer = (state = initialState, action) => {
                 logInError: null,
                 logInDone: false,
             };
-        case LOG_IN_SUCCESS :
+        case LOG_IN_SUCCESS:
             return {
                 ...state,
                 logInLoading: false,
@@ -71,11 +81,11 @@ const reducer = (state = initialState, action) => {
                 // me: { ...action.data, nickname: 'thelovemsg123'}
                 me: dummyUser(action.data),
             };
-        case LOG_IN_FAILURE :
+        case LOG_IN_FAILURE:
             return{
                 ...state,
                 logInDone: false,
-                logINError: action.error
+                logInError: action.error
             };
         case LOG_OUT_REQUEST:
             return{
@@ -117,8 +127,30 @@ const reducer = (state = initialState, action) => {
                 signUpLoading: false,
                 signUpError: action.error,
             };
+        case CHANGE_NICKNAME_REQUEST:
+            return{
+                ...state,
+                changeNicknameLoading: true,
+                changeNicknameDone: false,
+                changeNicknameError: null, 
+            };
+        case CHANGE_NICKNAME_SUCCESS:
+            return{
+                ...state,
+                changeNicknameLoading: false,
+                changeNicknameDone: true,
+                me: null,
+            };
+        case CHANGE_NICKNAME_FAILURE:
+            return{
+                ...state,
+                changeNicknameLoading: false,
+                changeNicknameError: action.error,
+            };
         default:
-            return state;
+            return {
+                ...state,
+            };
     }
 };
 

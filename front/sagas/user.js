@@ -9,7 +9,9 @@ function logInAPI(data) {
 
 function* login(action) {
     try {
+        console.log("before deley");
         yield delay(1000);
+        console.log("after deley");
         // const result = yield call(logInAPI, action.data); // 첫번째 자리가 함수고 그 다음자리부터는 함수의 매개변수가 온다. 
         yield put({
             type: LOG_IN_SUCCESS,

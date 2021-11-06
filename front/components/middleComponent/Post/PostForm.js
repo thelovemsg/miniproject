@@ -1,21 +1,25 @@
 import { Form, Input, Button } from 'antd';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import useInput from '../../../hooks/useInput';
 import { addPost } from '../../../reducers/post';
 
-const PostForm = () => {
-    const { imagePaths } = useSelector((state) => state.post);
-    const imageInput = useRef();
+const PostForm = () => { 
+    const { imagePaths, addPostDone } = useSelector((state) => state.post);
     const dispatch = useDispatch();
-    const [text, setText] = useState('');
-    const onChangeText = useCallback((e) => {
-        setText(e.target.value);
-    })
+    const [text, onChangeText, setText] = useInput('');
+    
+    useEffect(() => {
+        if(addPostDone){
+            setText('');
+        }
+    }, [addPostDone])
+    
     const onSubmit = useCallback(() => {
-        console.log("addPost");
-        dispatch(addPost); // addPost는 객체임.  action은 원래 객체임 
-        setText('');
-    }, []);
+        dispatch(addPost(text)); // addPost는 객체임.  action은 원래 객체임 
+    }, [text]);
+    
+    const imageInput = useRef();
     const onClickImageUpload = useCallback(() => {
         imageInput.current.click();
     }, [imageInput.current])

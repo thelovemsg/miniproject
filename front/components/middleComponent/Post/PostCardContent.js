@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 const PostCardContent = ({ postData }) => ( //첫 번째 게시글 # 해시태크 #익스프레스
     <div>
         {postData.split(/(#[^\s#]+)/g).map((v, i) => {
+            console.log("testintg");
             if (v.match(/(#[^\s#]+)/)){
                 return <Link href={`/hashtag/${v.slice(1)}`} key={i}><a>{v}</a></Link>
             }

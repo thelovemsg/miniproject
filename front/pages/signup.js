@@ -6,12 +6,17 @@ import AppLayout from '../components/AppLayout';
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import useInput from '../hooks/useInput';
+import { SIGN_UP_REQUEST } from '../reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
 
 const errorMsg = css`
   color: red;
 `
 const Signup = () => {
-  const [id, onChangeId] = useInput('');
+  const dispatch = useDispatch();
+  const { signUpLoading } = useSelector((state) => state.user);
+
+  const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   
@@ -42,8 +47,12 @@ const Signup = () => {
     if (!term){
       return setTermError(true);
     }
-    console.log(id, nickname, passwordCheck);
-  }, [password, passwordCheck, term]);
+    console.log(email, nickname, passwordCheck);
+    dispatchEvent({
+      type: SIGN_UP_REQUEST,
+      data: { email, password,}
+    })
+  }, [email, password, passwordCheck, term]);
   return (
     <AppLayout>
       <Head>회원가입 | Miniproject</Head>
@@ -52,11 +61,11 @@ const Signup = () => {
         layout="vertical"
         >
         <Form.Item
-          label="아이디"
-          name="user-id"
-          rules={[{ required: true, message: 'Please input your username!' }]}
+          label="이메일"
+          name="user-email"
+          rules={[{ required: true, message: 'Please input your email!' }]}
         >
-          <Input name="user-id" value={id} onChange={onChangeId} />
+          <Input name="user-email" type="email" value={email} onChange={onChangeEmail} />
         </Form.Item>
         <Form.Item
           label="닉네임"
@@ -95,7 +104,7 @@ const Signup = () => {
           {termError && <div css={errorMsg}>동의를 체크해주세요</div>}
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">가입하기</Button>
+          <Button type="primary" htmlType="submit" loading={signUpLoading}>가입하기</Button>
         </Form.Item>
       </Form>
     </AppLayout>
