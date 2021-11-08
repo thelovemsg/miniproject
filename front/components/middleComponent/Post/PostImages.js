@@ -21,7 +21,6 @@ const PostImages = ({ images }) => {
          )
     }
     if (images.length === 2){
-        console.log("이미지 두개");
         return (
             <>
                 <img role="presentation" style={{width:"50%", display:'inline-block'}} src={images[0].src} alt={images[0].src} onClick={onZoom} />

@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { jsx, css } from '@emotion/react'
 import { EllipsisOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, RetweetOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import { Form, Input, Button, Card, Popover, Avatar, List, Comment } from 'antd';
@@ -8,6 +10,8 @@ import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
 import { REMOVE_POST_REQUEST } from '../../../reducers/post';
+import FollowButton from './FollowButton';
+
 const PostCard = ({ post }) => {
     const dispatch = useDispatch();
     const { removePostLoading } = useSelector((state) => state.post);
@@ -28,7 +32,6 @@ const PostCard = ({ post }) => {
             data: post.id
         })
     }, []);
-
     return (
        <div>
            <Card key={post.id}
@@ -53,6 +56,7 @@ const PostCard = ({ post }) => {
                         <EllipsisOutlined />
                     </Popover>
                 ]}
+                extra={ id && <FollowButton post={post} />}
             >
             <Card.Meta
                 avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
