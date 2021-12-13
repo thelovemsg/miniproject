@@ -1,7 +1,21 @@
 import { delay, fork, all, takeLatest, put} from "redux-saga/effects";
 import shortId from "shortid";
-import { ADD_COMMENT_FAILURE, ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS,
-     ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_TO_ME, generateDummyPost, LOAD_POST_FAILURE, LOAD_POST_REQUEST, LOAD_POST_SUCCESS, REMOVE_POST_FAILURE, REMOVE_POST_REQUEST, REMOVE_POST_SUCCESS } from "../reducers/post";
+import { 
+    ADD_COMMENT_FAILURE, 
+    ADD_COMMENT_REQUEST, 
+    ADD_COMMENT_SUCCESS,
+    ADD_POST_FAILURE, 
+    ADD_POST_REQUEST, 
+    ADD_POST_SUCCESS, 
+    ADD_POST_TO_ME, 
+    generateDummyPost, 
+    LOAD_POST_FAILURE, 
+    LOAD_POST_REQUEST, 
+    LOAD_POST_SUCCESS, 
+    REMOVE_POST_FAILURE, 
+    REMOVE_POST_REQUEST, 
+    REMOVE_POST_SUCCESS 
+} from "../reducers/post";
 import { REMOVE_POST_OF_ME } from "../reducers/user";
 
 function addPostAPI(data) {
@@ -39,7 +53,6 @@ function loadPostAPI(data) {
 function* loadPost(action) {
     try {
         delay(1000);
-        console.log("loading Post...");
         const id = shortId.generate();
         yield put({
             type: LOAD_POST_SUCCESS,

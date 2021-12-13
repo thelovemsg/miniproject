@@ -1,7 +1,29 @@
-import { all, fork, put, delay, takeLatest } from "redux-saga/effects";
-import { LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, 
-         LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS 
-        ,SIGN_UP_FAILURE, SIGN_UP_SUCCESS, SIGN_UP_REQUEST, FOLLOW_REQUEST, UNFOLLOW_REQUEST, FOLLOW_FAILURE, FOLLOW_SUCCESS, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE} from "../reducers/user";
+import { all, fork, put, delay, takeLatest, call } from "redux-saga/effects";
+import axios from 'axios';
+
+import {
+    LOG_IN_FAILURE, 
+    LOG_IN_REQUEST, 
+    LOG_IN_SUCCESS, 
+    LOG_OUT_FAILURE, 
+    LOG_OUT_REQUEST, 
+    LOG_OUT_SUCCESS,
+    SIGN_UP_FAILURE, 
+    SIGN_UP_SUCCESS, 
+    SIGN_UP_REQUEST, 
+    FOLLOW_REQUEST, 
+    UNFOLLOW_REQUEST, 
+    FOLLOW_FAILURE, 
+    FOLLOW_SUCCESS, 
+    UNFOLLOW_SUCCESS,
+    UNFOLLOW_FAILURE,
+    SIGN_UP_FAIL_DUPLICATE
+} from "../reducers/user";
+import { warningMsg } from "../utils/sweetAlertUtils";
+
+export const FAIL = "FAIL";
+export const SUCCESS = "SUCCESS";
+export const DUPLICATE = "DUPLICATE";
 
 function logInAPI(data) {
     return axios.post('/api/login', data);
@@ -9,12 +31,19 @@ function logInAPI(data) {
 
 function* login(action) {
     try {
-        yield delay(1000);
-        // const result = yield call(logInAPI, action.data); // 첫번째 자리가 함수고 그 다음자리부터는 함수의 매개변수가 온다. 
-        yield put({
-            type: LOG_IN_SUCCESS,
-            data: action.data
-        });
+        const result = yield call(logInAPI, action.data);
+        console.log(result);
+        if(result.data.statusCode != 200){
+            warningMsg(result.data.responseMessage);
+            yield put({
+                type: LOG_IN_FAILURE,
+            })
+        }else{
+            yield put({
+                type: LOG_IN_SUCCESS,
+                data: result.data
+            });
+        }
     } catch (error) {
         yield put({
             type: LOG_IN_FAILURE,
@@ -30,7 +59,7 @@ function logOutAPI() {
 function* logout() {
     try {
         yield delay(1000);
-        // const result = yield call(logOutAPI);
+        const result = yield call(logOutAPI);
         yield put({
             type: LOG_OUT_SUCCESS,
         });
@@ -42,18 +71,27 @@ function* logout() {
     }
 }
 
-function signUpAPI() {
-    return axios.post('/api/logout');
+function signUpAPI(data) {
+    let test = axios.post('/api/member', data);
+    return test;
 }
 
 function* signUp(action) {
     try {
-        yield delay(1000);
-        // const result = yield call(logInAPI, action.data); // 첫번째 자리가 함수고 그 다음자리부터는 함수의 매개변수가 온다. 
-        yield put({
-            type: SIGN_UP_SUCCESS,
-            data: action.data
-        });
+        const result = yield call(signUpAPI, action.data); // 첫번째 자리가 함수고 그 다음자리부터는 함수의 매개변수가 온다. 
+        if(result.data === SUCCESS){
+            yield put({
+                type: SIGN_UP_SUCCESS,
+            });
+        } else if(result.data === DUPLICATE){
+            yield put({
+                type: SIGN_UP_FAIL_DUPLICATE,
+            });
+        } else if(result.data === FAIL){
+            yield put({
+                type: SIGN_UP_FAIL,
+            });
+        }
     } catch (error) {
         yield put({
             type: SIGN_UP_FAILURE,

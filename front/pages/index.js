@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import AppLayout from "../components/AppLayout";
 import PostCard from "../components/middleComponent/Post/PostCard";
 import PostForm from "../components/middleComponent/Post/PostForm";
-import { FixedSizeList as List } from 'react-window';
 import { LOAD_POST_REQUEST } from "../reducers/post";
 
 const Home = () => {
@@ -19,7 +18,6 @@ const Home = () => {
 
     useEffect(() => {
         function onScroll() {
-            console.log(window.scrollY, document.documentElement.clientHeight, document.documentElement.scrollHeight);
             if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight -  300){
                 if (hasMorePost && !loadPostLoading) {
                     dispatch({

@@ -3,9 +3,12 @@
 //yield - 그곳에서 멈춘다. 
 //put - dispatch라고 생각하면 편하다. 
 import { all, fork } from 'redux-saga/effects';
+import axios from 'axios';
 
 import postSaga from './post';
 import userSaga from './user';
+
+axios.defaults.baseURL = 'http://localhost:8080';
 
 export default function* rootsaga() {
     yield all([

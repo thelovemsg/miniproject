@@ -1,20 +1,34 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from '@emotion/react'
 import Head from 'next/head';
+import Router from 'next/router';
 import { Form, Input, Button, DatePicker, Space, Checkbox } from 'antd';
 import AppLayout from '../components/AppLayout';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import useInput from '../hooks/useInput';
-import { SIGN_UP_REQUEST } from '../reducers/user';
+import { SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_END, SIGN_UP_FAIL } from '../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
+import { warningMsg } from '../utils/sweetAlertUtils';
 
 const errorMsg = css`
   color: red;
 `
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, signUpErrorReason } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (signUpDone){
+      Router.push('/');
+    } else if(signUpError){
+      warningMsg(signUpErrorReason);
+    }
+    dispatch({
+      type : SIGN_UP_END
+    })
+
+  }, [signUpDone, signUpError])
 
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -25,12 +39,13 @@ const Signup = () => {
   const onChangePasswordCheck = useCallback((e) => {
     setPasswordCheck(e.target.value);
     setPasswordError(e.target.value !== password);
-  }, [password])
+  }, [password]);
   
-  const changeBirthDay = useCallback((date, dateString) => {
-    console.log(date);
-    console.log(dateString);
-  })
+  const [birthday, setBirthday] = useState('');
+
+  const chooseDate = useCallback((date, dateString) => {
+    setBirthday(dateString);
+  }, [birthday]);
   
   const [term, setTerm] = useState('');
   const [termError, setTermError] = useState(false);
@@ -43,16 +58,15 @@ const Signup = () => {
     if(password !== passwordCheck){
       return setPasswordError(true);
     }
-    console.log(term);
     if (!term){
       return setTermError(true);
     }
-    console.log(email, nickname, passwordCheck);
-    dispatchEvent({
+    console.log("birthday :: ", birthday);
+    dispatch({
       type: SIGN_UP_REQUEST,
-      data: { email, password,}
+      data: { email, password, birthday, nickname}
     })
-  }, [email, password, passwordCheck, term]);
+  }, [email, password, passwordCheck, term, birthday]);
   return (
     <AppLayout>
       <Head>회원가입 | Miniproject</Head>
@@ -83,24 +97,22 @@ const Signup = () => {
         </Form.Item>
         <Form.Item
           label="비밀번호 확인"
-          name="user-passwor-check"
-          rules={[{required:true, message: 'Please input your password again!'}]}
+          name="user-password-check"
         >
           <Input name="user-password-check" type="password" value={passwordCheck} onChange={onChangePasswordCheck} />
-          {passwordError && <div css={errorMsg}>비밀번호가 일치하지 않습니다.</div>}
+          {passwordError && <div css={errorMsg  }>비밀번호가 일치하지 않습니다.</div>}
         </Form.Item>
         <Form.Item
           label="생일"
           name="user-birthday"
           rules={[{required:true, message: 'Please input your birthday!'}]}
         >
-          <DatePicker onChange={changeBirthDay}/>
+          <DatePicker onChange={chooseDate}/>
         </Form.Item>
         <Form.Item
           name="user-term"
-          rules={[{required:true, message: 'Please check agreement!'}]}
         >
-          <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>위 사항에 대해 동의합니다.</Checkbox>
+          <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>개인 정보 제공에 동의합니다.</Checkbox>
           {termError && <div css={errorMsg}>동의를 체크해주세요</div>}
         </Form.Item>
         <Form.Item>

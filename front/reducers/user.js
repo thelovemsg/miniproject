@@ -1,5 +1,7 @@
 import produce from "immer";
-
+import { DUPLICATE, SUCCESS } from "../sagas/user";
+import { FAIL_SIGN_UP_WHEN_SIGNING_UP, NOT_ALLOWED_DUPLICATE_EMAIL } from "../utils/MsgConstants";
+import { warningMsg } from "../utils/sweetAlertUtils";
 export const initialState = {
     followLoading: false, // 로그인 시도중
     followDone: false,
@@ -16,6 +18,7 @@ export const initialState = {
     signUpLoading: false, // 회원가입 시도중
     signUpDone: false,
     signUpError: null,
+    signUpErrorReason: null,
     changeNicknameLoading: false, // 닉네임 변경 시도중
     changeNicknameDone: false,
     changeNicknameError: null,
@@ -27,6 +30,7 @@ export const initialState = {
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
+export const SIGN_UP_END = 'SIGN_UP_END';
 
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
@@ -35,6 +39,8 @@ export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
 export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
+export const SIGN_UP_FAIL_DUPLICATE = 'SIGN_UP_FAIL_DUPLICATE';
+export const SIGN_UP_FAIL = 'SIGN_UP_FAIL';
 
 export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
 export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
@@ -67,7 +73,7 @@ const dummyUser = (data) => ({
     ...data,
     nickname: '선준찡',
     id: 1,
-    Posts: [{ id: 1 }],
+    Posts: [{ id: 1 } ],
     Followings: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
     Followers: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
 });
@@ -108,8 +114,9 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
             draft.logInDone = false;
             break;
         case LOG_IN_SUCCESS:
+            console.log("action.data :: ", action.data);
             draft.logInLoading = false;
-            draft.me = dummyUser(action.data);
+            draft.me = action.data;
             draft.logInDone = true;
             break;
         case LOG_IN_FAILURE:
@@ -134,6 +141,21 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
         case SIGN_UP_SUCCESS:
             draft.signUpLoading = false;
             draft.signUpDone = true;
+            break;
+        case SIGN_UP_END:
+            draft.signUpDone = false;
+            draft.signUpError = null;
+            draft.signUpErrorReason = null;
+            break;
+        case SIGN_UP_FAIL_DUPLICATE:
+            draft.signUpLoading = false;
+            draft.signUpError = true;
+            draft.signUpErrorReason = NOT_ALLOWED_DUPLICATE_EMAIL;
+            break;
+        case SIGN_UP_FAIL:
+            draft.signUpLoading = false;
+            draft.signUpError = true;
+            draft.signUpErrorReason = FAIL_SIGN_UP_WHEN_SIGNING_UP;
             break;
         case SIGN_UP_FAILURE:
             draft.signUpLoading = false;

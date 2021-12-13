@@ -41,7 +41,6 @@ const globalStyle = css`
 const AppLayout = ({ children }) => {
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { me } = useSelector((state) => state.user);
-    console.log("me :: " , me)
     return (
         <Layout>
             <Global style={globalStyle} />
