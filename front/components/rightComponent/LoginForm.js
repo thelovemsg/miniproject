@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from '@emotion/react'
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginRequestAction } from '../../reducers/user';
@@ -14,15 +14,13 @@ import useInput from '../../hooks/useInput';
 const buttonStyle = css`
     margin-top: 20px;
 `;
-
 const LoginForm = () => {
     const dispatch = useDispatch();
-    const { logInLoading } = useSelector((state) => state.user);
+    const { logInLoading, me } = useSelector((state) => state.user);
     const [email, onChangeEmail] = useInput('');
     const [password, onChangePassword] = useInput('');
 
     const onSubmitForm = useCallback((e) => {
-        console.log(email, password);
         dispatch(loginRequestAction({email,password}));
     }, [email,password]);
 

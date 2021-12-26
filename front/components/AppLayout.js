@@ -3,7 +3,7 @@ import { Global, jsx, css } from '@emotion/react'
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { Layout, Menu, Input, Select, Row, Col } from 'antd'; // 필요한 컴포넌트를 가져온다
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const { Header, Content } = Layout;
 import UserProfile from './rightComponent/UserProfile';
 import SitesContent from './middleComponent/SitesContent';
@@ -12,6 +12,7 @@ import SearchForm from './headerComponent/SearchForm';
 import LeftSider from './leftComponent/LeftSider';
 import ChattingForm from './rightComponent/ChattingForm';
 import { useSelector} from 'react-redux';
+import { isLoggedIn } from '../utils/JwtRegisterUtils';
 const contentStyle = css`
     margin-top:20px;
 `;
@@ -38,9 +39,9 @@ const globalStyle = css`
     }
 `
 
+// const loginCheck = isLoggedIn();
 const AppLayout = ({ children }) => {
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const { me } = useSelector((state) => state.user);
+    const {me, loadMyInfoDone} = useSelector((state) => state.user);
     return (
         <Layout>
             <Global style={globalStyle} />
@@ -59,7 +60,7 @@ const AppLayout = ({ children }) => {
                         <Col xs={24} md={6}>
                             <div css={rightComponentStyle}>
                                 {/* {isLoggedIn ? <UserProfile setIsLoggedIn={setIsLoggedIn}/> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}  */}
-                                {me ? <UserProfile /> : <LoginForm />} 
+                                { loadMyInfoDone ? <UserProfile /> : <LoginForm />} 
                                 <ChattingForm/>
                             </div>
                         </Col>

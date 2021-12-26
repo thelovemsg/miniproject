@@ -1,6 +1,7 @@
 package miniproject.demo.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class Hashtag extends BaseTimeEntity{
 
     @Id @GeneratedValue

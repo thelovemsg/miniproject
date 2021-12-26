@@ -10,17 +10,23 @@ import useInput from '../hooks/useInput';
 import { SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_END, SIGN_UP_FAIL } from '../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { warningMsg } from '../utils/sweetAlertUtils';
-
+import Cookies from 'universal-cookie';
 const errorMsg = css`
   color: red;
 `
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, signUpError, signUpErrorReason } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, signUpErrorReason, me } = useSelector((state) => state.user);
+  const cookies = new Cookies();
+  useEffect(() => {
+    if (cookies.get("refreshToken")){
+      Router.replace('/');
+    }
+  });   
 
   useEffect(() => {
     if (signUpDone){
-      Router.push('/');
+      Router.replace('/');
     } else if(signUpError){
       warningMsg(signUpErrorReason);
     }

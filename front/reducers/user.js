@@ -1,11 +1,14 @@
 import produce from "immer";
-import { DUPLICATE, SUCCESS } from "../sagas/user";
 import { FAIL_SIGN_UP_WHEN_SIGNING_UP, NOT_ALLOWED_DUPLICATE_EMAIL } from "../utils/MsgConstants";
-import { warningMsg } from "../utils/sweetAlertUtils";
+
 export const initialState = {
+    loadMyInfoLoading: false, // 유저 정보 가져오기
+    loadMyInfoDone: false,
+    loadMyInfoError: null, 
     followLoading: false, // 로그인 시도중
     followDone: false,
     followError: null, 
+    postLength:null,
     unfollowLoading: false, // 로그인 시도중
     unfollowDone: false,
     unfollowError: null, 
@@ -22,10 +25,14 @@ export const initialState = {
     changeNicknameLoading: false, // 닉네임 변경 시도중
     changeNicknameDone: false,
     changeNicknameError: null,
-    me: null,
+    me: {},
     signUpData: {},
     loginData: {},
 } 
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAIL = 'LOAD_MY_INFO_FAIL';
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
@@ -69,17 +76,32 @@ export const logoutRequestAction = (data) => {
     }
 }
 
-const dummyUser = (data) => ({
-    ...data,
-    nickname: '선준찡',
-    id: 1,
-    Posts: [{ id: 1 } ],
-    Followings: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
-    Followers: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
-});
+// const dummyUser = (data) => ({
+//     ...data,
+//     nickname: '선준찡',
+//     id: 1,
+//     Posts: [{ id: 1 } ],
+//     Followings: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
+//     Followers: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
+// });
 
 const reducer = (state = initialState, action) => produce (state, (draft) => {
     switch (action.type){
+        case LOAD_MY_INFO_REQUEST:
+            draft.loadMyInfoLoading = true;
+            draft.loadMyInfoError = null;
+            draft.loadMyInfoDone = false;
+            break;
+        case LOAD_MY_INFO_SUCCESS:
+            draft.loadMyInfoLoading = false;
+            draft.me.postLength = action.data
+            // draft.me.Followings.push({id : action.data});
+            draft.loadMyInfoDone = true;
+            break;
+        case LOAD_MY_INFO_FAIL:
+            draft.loadMyInfoLoading = false;
+            draft.loadMyInfoError = action.error;
+            break;
         case FOLLOW_REQUEST:
             draft.followLoading = true;
             draft.followError = null;
@@ -113,15 +135,16 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
             draft.logInError = null;
             draft.logInDone = false;
             break;
-        case LOG_IN_SUCCESS:
-            console.log("action.data :: ", action.data);
+        case LOG_IN_SUCCESS:    
             draft.logInLoading = false;
-            draft.me = action.data;
+            draft.me.postLength = 0;
             draft.logInDone = true;
+            draft.loadMyInfoDone = true;
             break;
         case LOG_IN_FAILURE:
             draft.logInLoading = false;
-            draft.logInError = action.error;
+            draft.logInError = action.data;
+            draft.logIn
             break;
         case LOG_OUT_REQUEST:
             draft.logOutLoading = true;
@@ -131,7 +154,8 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
         case LOG_OUT_SUCCESS:
             draft.logOutLoading = false;
             draft.logOutDone = true;
-            draft.me = null;
+            draft.loadMyInfoDone = false;
+            draft.me = {};
             break;
         case SIGN_UP_REQUEST:
             draft.signUpLoading = true;

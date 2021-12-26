@@ -5,17 +5,18 @@ import { useSelector } from 'react-redux';
 import AppLayout from '../components/AppLayout';
 import FollowList from '../components/middleComponent/FollowList';
 import NicknameEditForm from '../components/middleComponent/NicknameEditForm';
+import Cookies from 'universal-cookie';
 
 const Profile = () => {
     const { me } = useSelector((state) => state.user);
-    // const followingList = [{nickname: 'nickname1'},{nickname: 'nickname2'},{nickname: 'nickname3'},{nickname: 'nickname4'}];
-    // const followerList = [{nickname: 'nickname1'},{nickname: 'nickname2'},{nickname: 'nickname3'},{nickname: 'nickname4'}];
+    const cookies = new Cookies();
     useEffect(() => {
-        if(!(me && me.id)) {
+        cookies.get("refreshToken");
+        if(cookies.get("refreshToken")) {
             Router.push('/');
         }
-    }, [me && me.id]);
-    if(!me) {
+    });
+    if(!cookies.get("refreshToken")) {
         return null;
     }
     return (
@@ -24,8 +25,8 @@ const Profile = () => {
                 <title>내 프로필</title>
             </Head>
             <NicknameEditForm/>
-            <FollowList header="팔로잉" data={me.Followings} /> 
-            <FollowList header="팔로워" data={me.Followers} /> 
+            <FollowList header="팔로잉" data={0} /> 
+            <FollowList header="팔로워" data={0} /> 
         </AppLayout>
     )
 }

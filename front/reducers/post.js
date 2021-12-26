@@ -68,25 +68,25 @@ export const addComment = (data) => ({
     data
 })
 
-const dummyPost = (data) => ({
-    id: data.id,
-    content: data.content,
-    User: {
-        id: 1,
-        nickname: 'thelovedaejeon',
-    },
-    Images: [],
-    Comments: [],
-});
+// const dummyPost = (data) => ({
+//     id: data.id,
+//     content: data.content,
+//     User: {
+//         id: 1,
+//         nickname: 'thelovedaejeon',
+//     },
+//     Images: [],
+//     Comments: [],
+// });
 
-const dummyComment = (data) => ({
-    id: shortId.generate(),
-    content: data,
-    User: {
-        id: 1,
-        nickname: 'thelovedaejeon',
-    },
-})
+// const dummyComment = (data) => ({
+//     id: shortId.generate(),
+//     content: data,
+//     User: {
+//         id: 1,
+//         nickname: 'thelovedaejeon',
+//     },
+// })
 
 //이전 상태를 action을 통해 다음 상태로 만들어 내는 함수 (불변성을 지키면서)
 const reducer = (state = initialState, action) => {
@@ -101,7 +101,7 @@ const reducer = (state = initialState, action) => {
                 draft.loadPostLoading = false;
                 draft.loadPostDone= true;
                 draft.mainPosts = action.data.concat(draft.mainPosts);
-                draft.hasMorePost =draft.mainPosts.length < 50;
+                draft.hasMorePost = false;
                 break;
             case LOAD_POST_FAILURE:
                 draft.loadPostLoading = false;

@@ -1,5 +1,9 @@
-import { delay, fork, all, takeLatest, put} from "redux-saga/effects";
+import { delay, fork, all, takeLatest, put, call} from "redux-saga/effects";
 import shortId from "shortid";
+import axios from 'axios';
+// import Axios from 'axios';
+// import qs from 'query-string';
+import Cookies from 'universal-cookie';
 import { 
     ADD_COMMENT_FAILURE, 
     ADD_COMMENT_REQUEST, 
@@ -17,28 +21,38 @@ import {
     REMOVE_POST_SUCCESS 
 } from "../reducers/post";
 import { REMOVE_POST_OF_ME } from "../reducers/user";
-
+const cookies = new Cookies();
 function addPostAPI(data) {
-    return axios.post('/api/post', data);
+    const accessToken = cookies.get("accessToken");
+    const userEmail = cookies.get("userEmail");
+    const newObj = {
+        description : data,
+        email : userEmail
+    }
+    return axios.post('/auth/post', newObj,{
+        headers:{
+            'Authorization': `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        }
+    });
 }
 
 function* addPost(action) {
     try {
-        delay(2000);
-        // const result = yield call(addPostAPI, action.data);
-        const id = shortId.generate();
+        const result = yield call(addPostAPI, action.data);
         yield put({
             type: ADD_POST_SUCCESS,
             data: {
-                id,
+                id : result.data.postId,
                 content: action.data
             }
         })
         yield put({
             type: ADD_POST_TO_ME,
-            data: id,
+            data: result.data.postId,
         })
     } catch (error) {
+        console.log(error);
         yield put({
             type: ADD_POST_FAILURE,
             data: error.data
@@ -47,21 +61,23 @@ function* addPost(action) {
 }
 
 function loadPostAPI(data) {
-    return axios.get('/api/posts', data);
+    return axios.get('/api/posts');
 }
 
 function* loadPost(action) {
     try {
-        delay(1000);
-        const id = shortId.generate();
+        const result = yield call(loadPostAPI);
+        console.log(result);
+        console.log(result.data);
         yield put({
             type: LOAD_POST_SUCCESS,
-            data: generateDummyPost(10)
-        });
+            data: result.data.result,
+        }); 
     } catch (error) {
+        console.log(error);
         yield put({
             type: LOAD_POST_FAILURE,
-            data: error.data
+            data: error.data 
         })
     }
 }
@@ -81,7 +97,7 @@ function* removePost(action) {
             data: action.data
             
         });
-        yield put({
+        yield put({ 
             type: REMOVE_POST_OF_ME,
             data: action.data
         })
@@ -94,7 +110,7 @@ function* removePost(action) {
 }
 
 function addCommentAPI(data) {
-    return axios.post('/api/post', data);
+    return axios.post('/api/post/${data.postId}/comment', data);
 }
 
 function* addComment(action) {

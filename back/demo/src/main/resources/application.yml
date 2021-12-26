@@ -17,3 +17,5 @@ logging:
   level:
     org.hibernate.SQL: debug # sql을 log를 통해 보여줌
     org.hibernate.type: trace
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWw=
