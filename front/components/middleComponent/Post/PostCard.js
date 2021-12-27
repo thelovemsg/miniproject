@@ -13,6 +13,7 @@ import { REMOVE_POST_REQUEST } from '../../../reducers/post';
 import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
+    console.log("post :: ", post);
     const dispatch = useDispatch();
     const { removePostLoading } = useSelector((state) => state.post);
     const [liked, setLiked] = useState(false);
@@ -69,15 +70,15 @@ const PostCard = ({ post }) => {
                     {/* 어떤 게시글에 댓글을 달지 정보가 필요 - 게시글 id */}
                     <CommentForm post={post}/>
                     <List 
-                        header={`${post.Comments.length}개의 댓글`}
+                        header={`${post.commentList.length}개의 댓글`}
                         itemLayout="horizontal"
-                        dataSource={post.Comments}
+                        dataSource={post.commentList}
                         renderItem={(item) => (
                             <li>
                                 <Comment
-                                    author={item.User.nickname}
-                                    avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
-                                    content={item.content}
+                                    // author={item.User.nickname}
+                                    // avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                                    // content={item.content}
                                 />
                             </li>
                         )}

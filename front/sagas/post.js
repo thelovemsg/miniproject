@@ -40,12 +40,10 @@ function addPostAPI(data) {
 function* addPost(action) {
     try {
         const result = yield call(addPostAPI, action.data);
+        console.log("result in addPost :: ", result);
         yield put({
             type: ADD_POST_SUCCESS,
-            data: {
-                id : result.data.postId,
-                content: action.data
-            }
+            data: result.data,
         })
         yield put({
             type: ADD_POST_TO_ME,
@@ -68,7 +66,7 @@ function* loadPost(action) {
     try {
         const result = yield call(loadPostAPI);
         console.log(result);
-        console.log(result.data);
+        console.log("result.data :: ", result.data);
         yield put({
             type: LOAD_POST_SUCCESS,
             data: result.data.result,

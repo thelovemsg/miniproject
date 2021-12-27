@@ -16,10 +16,10 @@ const Home = () => {
         dispatch({
             type: LOAD_MY_INFO_REQUEST
         });
-        // dispatch({
-        //     type: LOAD_POST_REQUEST,
-        // });
-    }, [hasMorePost, loadPostLoading]);
+        dispatch({
+            type: LOAD_POST_REQUEST,
+        });
+    }, []);
 
     useEffect(() => {
         function onScroll() {

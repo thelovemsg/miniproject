@@ -35,6 +35,7 @@ public class PostService {
       Content content = new Content(post);
       Member member1 = memberRepository.findByEmail(post.getEmail()).orElseGet(() -> new Member());
       content.setMember(member1);
+      content.setContentWriter(member1.getNickname());
       Content newContent = contentRepository.save(content);
       return new PostDto(newContent);
    }

@@ -199,7 +199,8 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
             draft.changeNicknameError = action.error;
             break;
         case ADD_POST_TO_ME:
-            draft.me.Posts.unshift({ id: action.data });
+            console.log(action);
+            // draft.me.Posts.unshift({ id: action.data });
             break;
             // return {
             //   ...state,

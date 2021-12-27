@@ -2,12 +2,10 @@ package miniproject.demo.controller;
 
 import lombok.RequiredArgsConstructor;
 import miniproject.demo.constants.StatusCode;
-import miniproject.demo.dto.MemberDto;
-import miniproject.demo.dto.PostDto;
-import miniproject.demo.dto.TokenDto;
-import miniproject.demo.dto.TokenRequestDto;
+import miniproject.demo.dto.*;
 import miniproject.demo.dto.auth.MemberRequestDto;
 import miniproject.demo.dto.auth.MemberResponseDto;
+import miniproject.demo.entity.Comment;
 import miniproject.demo.entity.Content;
 import miniproject.demo.entity.DefaultRes;
 import miniproject.demo.enums.ResultEnum;
@@ -64,6 +62,11 @@ public class AuthController {
         }else{
             return new ResponseEntity(DefaultRes.res(StatusCode.RESET_CONTENT, memberInfo), HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/addComment")
+    public ResponseEntity<CommentDto> addComment(@RequestBody CommentDto commentDto){
+        return null;
     }
 
     @PostMapping("/post")

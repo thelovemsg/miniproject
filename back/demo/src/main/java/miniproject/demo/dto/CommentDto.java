@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class CommentDto {
     private Long id;
     private String description;
+    private String writer;
     private Long memberId;
     private Long parentId;
 }
