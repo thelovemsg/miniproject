@@ -69,7 +69,7 @@ function* loadPost(action) {
         console.log("result.data :: ", result.data);
         yield put({
             type: LOAD_POST_SUCCESS,
-            data: result.data.result,
+            data: result.data.result.content,
         }); 
     } catch (error) {
         console.log(error);

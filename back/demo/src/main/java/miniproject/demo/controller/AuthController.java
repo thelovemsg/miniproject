@@ -5,14 +5,10 @@ import miniproject.demo.constants.StatusCode;
 import miniproject.demo.dto.*;
 import miniproject.demo.dto.auth.MemberRequestDto;
 import miniproject.demo.dto.auth.MemberResponseDto;
-import miniproject.demo.entity.Comment;
-import miniproject.demo.entity.Content;
 import miniproject.demo.entity.DefaultRes;
-import miniproject.demo.enums.ResultEnum;
 import miniproject.demo.service.AuthService;
 import miniproject.demo.service.MemberService;
 import miniproject.demo.service.PostService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")

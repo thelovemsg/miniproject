@@ -13,7 +13,6 @@ import miniproject.demo.repository.querydsl.ContentInfoQuerydslRepository;
 import miniproject.demo.repository.querydsl.ContentQuerydslRepository;
 import miniproject.demo.utils.EncryptUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

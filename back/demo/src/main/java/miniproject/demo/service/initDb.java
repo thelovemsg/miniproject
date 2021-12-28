@@ -25,7 +25,6 @@ public class initDb {
     public void init(){
         try {
             initService.dbInit1();
-//          initService.dbInit2();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -35,31 +34,32 @@ public class initDb {
     @Transactional
     @RequiredArgsConstructor
     static class InitService {
-
         private final EntityManager em;
         public void dbInit1() throws NoSuchAlgorithmException {
-            Member member1 = new Member("thelovemsg@naver.com","123", EncryptUtils.hashPassword("123"), LocalDate.now(), Authority.ROLE_USER);
-            em.persist(member1);
+            for(int i = 0; i <20; i++){
+                Member member = new Member("thelovemsg"+i+"@naver.com",Integer.toString(i), EncryptUtils.hashPassword("123"), LocalDate.now(), Authority.ROLE_USER);
+                em.persist(member);
 
-            Content content1 = new Content("description1", member1.getNickname(), member1);
-            em.persist(content1);
+                Content content = new Content("description"+i, member.getNickname(), member);
+                em.persist(content);
 
-            Comment comment1 = new Comment(content1,"comment1");
-            em.persist(comment1);
+                Comment comment = new Comment(content,"comment1");
+                em.persist(comment);
 
-            ContentInfo contentInfo1 = new ContentInfo(content1, ContentInfoType.LIKE, member1);
-            ContentInfo contentInfo2 = new ContentInfo(content1, ContentInfoType.FOLLOWING, member1);
-            ContentInfo contentInfo3 = new ContentInfo(content1, ContentInfoType.FOLLOWED, member1);
-            ContentInfo contentInfo4 = new ContentInfo(content1, ContentInfoType.LIKE, member1);
-            ContentInfo contentInfo5 = new ContentInfo(content1, ContentInfoType.LIKED, member1);
-            em.persist(contentInfo1);
-            em.persist(contentInfo2);
-            em.persist(contentInfo3);
-            em.persist(contentInfo4);
-            em.persist(contentInfo5);
+                ContentInfo contentInfo1 = new ContentInfo(content, ContentInfoType.LIKE, member);
+                ContentInfo contentInfo2 = new ContentInfo(content, ContentInfoType.FOLLOWING, member);
+                ContentInfo contentInfo3 = new ContentInfo(content, ContentInfoType.FOLLOWED, member);
+                ContentInfo contentInfo4 = new ContentInfo(content, ContentInfoType.LIKE, member);
+                ContentInfo contentInfo5 = new ContentInfo(content, ContentInfoType.LIKED, member);
+                em.persist(contentInfo1);
+                em.persist(contentInfo2);
+                em.persist(contentInfo3);
+                em.persist(contentInfo4);
+                em.persist(contentInfo5);
+            }
+
 
 
         }
-
     }
 }
