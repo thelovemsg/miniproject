@@ -21,11 +21,11 @@ public class PostDto {
     private String writer;
     private LocalDateTime createdDate;
     private String email;
-    private List<CommentDto> commentList = new ArrayList<>();
-    private List<ImageDto> imageDtoList = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
+    private List<Image> imageList = new ArrayList<>();
 
     @QueryProjection
-    public PostDto(Long postId, Long memberId, String description, String writer, LocalDateTime createdDate){
+    public PostDto(Long postId, Long memberId, String writer, String description, LocalDateTime createdDate){
         this.postId = postId;
         this.memberId = memberId;
         this.description = description;
@@ -52,6 +52,7 @@ public class PostDto {
         this.writer = content.getContentWriter();
         this.description = content.getDescription();
         this.commentList = commentList;
-        this.imageDtoList = imageDtoList;
+        this.imageList = imageDtoList;
     }
+
 }

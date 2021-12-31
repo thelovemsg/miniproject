@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import miniproject.demo.dto.CommentDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,17 +27,29 @@ public class Comment extends BaseTimeEntity{
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "content_id")
     @JsonIgnore
-    private Content content;
+    private Content content = new Content();
 
-    private String comment_description;
+    private Long memberId;
+
+    private String commentWriter;
+    private String commentDescription;
 
     @OneToMany(mappedBy = "id")
     @JsonIgnore
     private List<Comment> parent_comment = new ArrayList<>();
 
-    public Comment(Content content, String description){
+    public Comment(Content content, String description, String writer){
         this.content = content;
-        this.comment_description = description;
+        this.commentDescription = description;
+        this.commentWriter = writer;
+        this.memberId  = content.getMember().getId();
+    }
+
+    public Comment(CommentDto commentDto ,Content content){
+        this.content = content;
+        this.memberId = commentDto.getMemberId();
+        this.commentDescription = commentDto.getDescription();
+        this.commentWriter = commentDto.getWriter();
     }
 
 }

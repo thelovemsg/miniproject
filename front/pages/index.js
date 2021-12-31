@@ -9,24 +9,31 @@ import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 const Home = () => {
     const dispatch = useDispatch();
     const { me } = useSelector((state) => state.user);
-    const { mainPosts, hasMorePost, loadPostLoading } = useSelector((state) => state.post);
-
+    const { pageable, mainPosts, isLastPage, loadPostLoading } = useSelector((state) => state.post);
+    
     useEffect(() => {
-        console.log("useEffect in index.js")
         dispatch({
             type: LOAD_MY_INFO_REQUEST
         });
         dispatch({
             type: LOAD_POST_REQUEST,
+            data: {
+                pageNumber : pageable.pageNumber,
+                pageSize : pageable.pageSize,
+            }
         });
     }, []);
 
     useEffect(() => {
         function onScroll() {
-            if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight -  300){
-                if (hasMorePost && !loadPostLoading) {
+            if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300){
+                if (!isLastPage && !loadPostLoading ) {
                     dispatch({
                         type: LOAD_POST_REQUEST,
+                        data: {
+                            pageNumber : pageable.pageNumber + 1,
+                            pageSize : pageable.pageSize,
+                        }
                     }); 
                 }
             }
@@ -35,8 +42,7 @@ const Home = () => {
         return () => {
             window.removeEventListener('scroll', onScroll);
         }
-    }, []);
-    console.log(mainPosts);
+    }, [isLastPage, pageable, loadPostLoading]);
     return (
         <AppLayout>
             {me && <PostForm />}

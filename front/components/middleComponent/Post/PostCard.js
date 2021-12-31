@@ -13,7 +13,6 @@ import { REMOVE_POST_REQUEST } from '../../../reducers/post';
 import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
-    console.log("post :: ", post);
     const dispatch = useDispatch();
     const { removePostLoading } = useSelector((state) => state.post);
     const [liked, setLiked] = useState(false);
@@ -35,8 +34,8 @@ const PostCard = ({ post }) => {
     }, []);
     return (
        <div>
-           <Card key={post.id}
-                cover={post.imageDtoList[0] && <PostImages images={post.Images} />}
+           <Card key={post.postId}
+                cover={post.imageList[0] && <PostImages images={post.imageList} />}
                 actions={[
                     <RetweetOutlined key="retweet"/>, 
                     liked
@@ -60,7 +59,7 @@ const PostCard = ({ post }) => {
                 extra={ id && <FollowButton post={post} />}
             >
             <Card.Meta
-                avatar={<Avatar>{post.writer}</Avatar>}
+                avatar={<Avatar>{post.writer[0]}</Avatar>}
                 title={post.writer} 
                 description={<PostCardContent postData={post.description} />}
             />
@@ -76,9 +75,9 @@ const PostCard = ({ post }) => {
                         renderItem={(item) => (
                             <li>
                                 <Comment
-                                    // author={item.User.nickname}
-                                    // avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
-                                    // content={item.content}
+                                    author={item.commentWriter}
+                                    avatar={<Avatar>{item.commentWriter[0]}</Avatar>}
+                                    content={item.commentDescription}
                                 />
                             </li>
                         )}

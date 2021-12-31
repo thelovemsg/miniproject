@@ -37,13 +37,13 @@ public class initDb {
         private final EntityManager em;
         public void dbInit1() throws NoSuchAlgorithmException {
             for(int i = 0; i <20; i++){
-                Member member = new Member("thelovemsg"+i+"@naver.com",Integer.toString(i), EncryptUtils.hashPassword("123"), LocalDate.now(), Authority.ROLE_USER);
+                Member member = new Member("thelovemsg"+i+"@naver.com","nickname" + Integer.toString(i), EncryptUtils.hashPassword("123"), LocalDate.now(), Authority.ROLE_USER);
                 em.persist(member);
 
                 Content content = new Content("description"+i, member.getNickname(), member);
                 em.persist(content);
 
-                Comment comment = new Comment(content,"comment1");
+                Comment comment = new Comment(content,"comment1", member.getNickname());
                 em.persist(comment);
 
                 ContentInfo contentInfo1 = new ContentInfo(content, ContentInfoType.LIKE, member);
@@ -57,9 +57,7 @@ public class initDb {
                 em.persist(contentInfo4);
                 em.persist(contentInfo5);
             }
-
-
-
         }
     }
+
 }

@@ -59,7 +59,6 @@ const AppLayout = ({ children }) => {
                         </Col>
                         <Col xs={24} md={6}>
                             <div css={rightComponentStyle}>
-                                {/* {isLoggedIn ? <UserProfile setIsLoggedIn={setIsLoggedIn}/> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}  */}
                                 { loadMyInfoDone ? <UserProfile /> : <LoginForm />} 
                                 <ChattingForm/>
                             </div>

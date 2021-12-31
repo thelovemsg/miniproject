@@ -9,6 +9,7 @@ import miniproject.demo.entity.DefaultRes;
 import miniproject.demo.service.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +22,9 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/api/posts")
-    public ResponseEntity loadingPosts(ContentSearchCondition condition, Pageable pageable){
-        Page<PostDto> postsList = postService.getPostsList(condition, pageable);
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_SEARCH_SUCCESS, postsList), HttpStatus.OK);
+    public ResponseEntity loadingPosts(ContentSearchCondition condition, @PageableDefault(size = 10) Pageable pageable){
+        Page<PostDto> postPages = postService.getPostsList(condition, pageable);
+        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.POST_SEARCH_SUCCESS, postPages), HttpStatus.OK);
     }
 
     @GetMapping("/api/hello")

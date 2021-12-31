@@ -2,6 +2,7 @@ package miniproject.demo.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import miniproject.demo.dto.CommentDto;
 import miniproject.demo.dto.PostDto;
 import miniproject.demo.dto.search.ContentSearchCondition;
 import miniproject.demo.entity.Comment;
@@ -14,6 +15,7 @@ import miniproject.demo.repository.ImageRepository;
 import miniproject.demo.repository.MemberRepository;
 import miniproject.demo.repository.querydsl.ContentRepositoryCustom;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -35,7 +38,6 @@ public class PostService {
    private final ImageRepository imageRepository;
    private final ContentRepositoryCustom contentRepositoryCustom;
 
-   @Transactional(readOnly = false)
    public PostDto saveContent(PostDto post){
       Content content = new Content(post);
       Member member1 = memberRepository.findByEmail(post.getEmail()).orElseGet(() -> new Member());
@@ -45,30 +47,17 @@ public class PostService {
       return new PostDto(newContent);
    }
 
-//   @Transactional(readOnly = false)
-//   public List<PostDto> getPostsList(){
-//      List<Content> contentList = contentRepository.findAll();
-//      List<PostDto> postDtoList = contentList.stream().map(content -> {
-//         List<Comment> comments = commentRepository.findAllCommentByContentId(content.getId());
-//         List<Image> images = imageRepository.findAllImagesByContentId(content.getId());
-//         PostDto postDto = new PostDto(content, comments, images);
-//         return postDto;
-//      }).collect(Collectors.toList());
-//      return postDtoList;
-//   }
-
-   @Transactional(readOnly = false)
    public Page<PostDto> getPostsList(ContentSearchCondition condition, Pageable pageable){
-      Page<PostDto> postDtos = contentRepositoryCustom.searchContentByApplyPage(condition, pageable);
-      System.out.println("postDtos = " + postDtos);
-//      List<Content> contentList = contentRepository.findAll();
-//      List<PostDto> postDtoList = contentList.stream().map(content -> {
-//         List<Comment> comments = commentRepository.findAllCommentByContentId(content.getId());
-//         List<Image> images = imageRepository.findAllImagesByContentId(content.getId());
-//         PostDto postDto = new PostDto(content, comments, images);
-//         return postDto;
-//      }).collect(Collectors.toList());
-      return postDtos;
+      Page<PostDto> postPages = contentRepositoryCustom.searchContentByApplyPage(condition, pageable);
+      List<PostDto> postList = postPages.stream().map(post -> {
+         System.out.println("post = " + post);
+         List<Comment> commentList = commentRepository.findAllCommentByContentId(post.getPostId());
+         List<Image> imageList = imageRepository.findAllImagesByContentId(post.getPostId());
+         post.setCommentList(commentList);
+         post.setImageList(imageList);
+         return post;
+      }).collect(Collectors.toList());
+      return new PageImpl<>(postList, pageable, postPages.getTotalElements());
    }
 
 }

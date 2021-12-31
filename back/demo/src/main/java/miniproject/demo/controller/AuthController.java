@@ -7,8 +7,10 @@ import miniproject.demo.dto.auth.MemberRequestDto;
 import miniproject.demo.dto.auth.MemberResponseDto;
 import miniproject.demo.entity.DefaultRes;
 import miniproject.demo.service.AuthService;
+import miniproject.demo.service.CommentService;
 import miniproject.demo.service.MemberService;
 import miniproject.demo.service.PostService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ public class AuthController {
     private final AuthService authservice;
     private final MemberService memberService;
     private final PostService postService;
+    private final CommentService commentService;
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponseDto> signup(@RequestBody MemberRequestDto memberRequestDto) {
@@ -35,11 +38,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody MemberRequestDto memberRequestDto) {
-//        token을 header에 담아서 사용도 가능함.
-//        TokenDto token = authservice.login(memberRequestDto);
-//        res.addHeader("at-jwt-access-token", token.getAccessToken());
-//        res.addHeader("at-jwt-refresh-token", token.getRefreshToken());
-//        return ResponseEntity.ok(memberRequestDto);
         return ResponseEntity.ok(authservice.login(memberRequestDto));
     }
 
@@ -58,13 +56,14 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/addComment")
+    @PostMapping("/comment")
     public ResponseEntity<CommentDto> addComment(@RequestBody CommentDto commentDto){
-        return null;
+        return ResponseEntity.ok( commentService.addComment(commentDto));
     }
 
     @PostMapping("/post")
     public ResponseEntity<PostDto> postContent(@RequestBody PostDto postDto){
-        return ResponseEntity.ok(postService.saveContent(postDto));
+        PostDto postDto1 = postService.saveContent(postDto);
+        return ResponseEntity.ok(postDto1);
     }
 }

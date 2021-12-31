@@ -1,11 +1,21 @@
 import shortId from 'shortid';
 import produces, { produce } from 'immer';
 import faker from 'faker';
-import { ConsoleSqlOutlined } from '@ant-design/icons';
 export const initialState = {
+    pageable:{
+        offset: 0,
+        pageNumber: -1,
+        pageSize: 10,
+        paged: true,
+        unpaged: false,
+    },
+    isPageSetting: false,
+    totalElements: 0,
+    totalPages: 0,
+    isLastPage: false,
+    isFirstPage: true,
     mainPosts: [],
     imagePaths: [],
-    hasMorePost: true,
     loadPostLoading: false,
     loadPostDone: false,
     loadPostError: null,
@@ -98,10 +108,19 @@ const reducer = (state = initialState, action) => {
                 draft.loadPostError= null;
                 break;
             case LOAD_POST_SUCCESS:
+                console.log("action.data.content :: ", action.data.content);
                 draft.loadPostLoading = false;
                 draft.loadPostDone= true;
-                draft.mainPosts = action.data.concat(draft.mainPosts);
-                draft.hasMorePost = false;
+                draft.mainPosts = draft.mainPosts.concat(action.data.content);
+                draft.pageable.pageNumber = action.data.pageable.pageNumber;
+                draft.pageable.pageSize = action.data.pageable.pageSize;
+                draft.pageable.paged = action.data.pageable.paged;
+                draft.pageable.offset = action.data.pageable.offset;
+                draft.pageable.paged = action.data.pageable.paged;
+                draft.pageable.unpaged = action.data.pageable.unpaged;
+                draft.totalPages = action.data.totalPages;
+                draft.totalElements = action.data.totalElements;
+                draft.isLastPage = action.data.last;
                 break;
             case LOAD_POST_FAILURE:
                 draft.loadPostLoading = false;
@@ -115,7 +134,7 @@ const reducer = (state = initialState, action) => {
             case ADD_POST_SUCCESS:
                 draft.addPostLoading = false;
                 draft.addPostDone= true;
-                draft.mainPosts.unshift(action);
+                draft.mainPosts.unshift(action.data);
                 break;
             case ADD_POST_FAILURE:
                 draft.addPostLoading = false;
@@ -141,6 +160,7 @@ const reducer = (state = initialState, action) => {
                 draft.addCommentError = null;
                 break;
             case ADD_COMMENT_SUCCESS:{
+                console.log("Addcomment :: ", action.data);
                 const post = draft.mainPosts.find((v) => v.id === action.data.postId);
                 post.commentList = {};
                 draft.addCommentLoading = false;

@@ -1,4 +1,4 @@
-import { delay, fork, all, takeLatest, put, call} from "redux-saga/effects";
+import { delay, fork, all, takeLatest, put, call, takeLeading, throttle, debounce, take} from "redux-saga/effects";
 import shortId from "shortid";
 import axios from 'axios';
 // import Axios from 'axios';
@@ -40,7 +40,6 @@ function addPostAPI(data) {
 function* addPost(action) {
     try {
         const result = yield call(addPostAPI, action.data);
-        console.log("result in addPost :: ", result);
         yield put({
             type: ADD_POST_SUCCESS,
             data: result.data,
@@ -50,7 +49,6 @@ function* addPost(action) {
             data: result.data.postId,
         })
     } catch (error) {
-        console.log(error);
         yield put({
             type: ADD_POST_FAILURE,
             data: error.data
@@ -59,20 +57,17 @@ function* addPost(action) {
 }
 
 function loadPostAPI(data) {
-    return axios.get('/api/posts');
+    return axios.get(`/api/posts?page=${data.pageNumber}&size=${data.pageSize}`);
 }
 
 function* loadPost(action) {
     try {
-        const result = yield call(loadPostAPI);
-        console.log(result);
-        console.log("result.data :: ", result.data);
+        const result = yield call(loadPostAPI, action.data);
         yield put({
             type: LOAD_POST_SUCCESS,
-            data: result.data.result.content,
+            data: result.data.result,
         }); 
     } catch (error) {
-        console.log(error);
         yield put({
             type: LOAD_POST_FAILURE,
             data: error.data 
@@ -93,7 +88,6 @@ function* removePost(action) {
         yield put({
             type: REMOVE_POST_SUCCESS,
             data: action.data
-            
         });
         yield put({ 
             type: REMOVE_POST_OF_ME,
@@ -108,13 +102,27 @@ function* removePost(action) {
 }
 
 function addCommentAPI(data) {
-    return axios.post('/api/post/${data.postId}/comment', data);
+
+    const accessToken = cookies.get("accessToken");
+    const userEmail = cookies.get("userEmail");
+    const newObj = {
+        description : data.description,
+        email : userEmail,
+        postId : data.postId,
+    }
+    return axios.post('/auth/comment', newObj, {
+            headers:{
+                'Authorization': `Bearer ${accessToken}`,
+                "Content-Type": "application/json"
+            }
+        }
+    );
 }
 
 function* addComment(action) {
     try {
-        delay(1000);
-        // const result = yield call(addPostAPI, action.data);
+        const result = yield call(addCommentAPI, action.data);
+        console.log("result :: ", result)
         yield put({
             type: ADD_COMMENT_SUCCESS,
             data: action.data
@@ -128,7 +136,7 @@ function* addComment(action) {
 }
 
 function* watchAddPost(){
-    yield takeLatest(ADD_POST_REQUEST, addPost); // 첫번째것만 하고 싶으면 takeLeading
+    yield takeLeading(ADD_POST_REQUEST, addPost); // 첫번째것만 하고 싶으면 takeLeading
 }
 
 function* watchLoadPost(){
