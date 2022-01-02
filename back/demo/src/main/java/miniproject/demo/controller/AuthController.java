@@ -14,10 +14,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -58,7 +55,9 @@ public class AuthController {
 
     @PostMapping("/comment")
     public ResponseEntity<CommentDto> addComment(@RequestBody CommentDto commentDto){
-        return ResponseEntity.ok( commentService.addComment(commentDto));
+        CommentDto commentDto1 = commentService.addComment(commentDto);
+        System.out.println("commentDto1 = " + commentDto1);
+        return ResponseEntity.ok(commentDto1);
     }
 
     @PostMapping("/post")
@@ -66,4 +65,15 @@ public class AuthController {
         PostDto postDto1 = postService.saveContent(postDto);
         return ResponseEntity.ok(postDto1);
     }
+
+    @PatchMapping("/post/{postId}/like")
+    public String testing(@PathVariable("postId") Long postId){
+        return "ttesting!!";
+    }
+
+    @DeleteMapping("/post/{postId}/like")
+    public String deleteTesting(@PathVariable("postId") Long postId){
+        return "remove like testing";
+    }
+
 }

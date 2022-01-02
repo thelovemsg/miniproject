@@ -28,6 +28,7 @@ public class CommentService {
         commentDto.setMemberId(findMember.getId());
         commentDto.setWriter(findMember.getNickname());
         Comment comment = commentRepository.save(new Comment(commentDto, content));
+        System.out.println("comment = " + comment);
         return new CommentDto(comment);
     }
 }

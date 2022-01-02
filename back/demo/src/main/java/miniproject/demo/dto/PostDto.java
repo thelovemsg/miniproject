@@ -21,8 +21,8 @@ public class PostDto {
     private String writer;
     private LocalDateTime createdDate;
     private String email;
-    private List<Comment> commentList = new ArrayList<>();
-    private List<Image> imageList = new ArrayList<>();
+    private List<CommentDto> commentList = new ArrayList<>();
+    private List<ImageDto> imageList = new ArrayList<>();
 
     @QueryProjection
     public PostDto(Long postId, Long memberId, String writer, String description, LocalDateTime createdDate){

@@ -17,12 +17,22 @@ const PostCard = ({ post }) => {
     const { removePostLoading } = useSelector((state) => state.post);
     const [liked, setLiked] = useState(false);
     const [commentFormOpend, setCommentFormOpened] = useState(false); 
-    const onToggleLike = useCallback(() => {
-        setLiked((prev) => !prev);
+    const onLike = useCallback(() => {
+        dispatch({
+            type: LIKE_POST_REQUEST,
+            data: post.postId
+        })
+    }, []);
+    const onUnlike = useCallback(() => {
+        dispatch({
+            type: UNLIKE_POST_REQUEST,
+            data: post.postId
+        })
     }, []);
     const onToggleComment = useCallback(() => {
         setCommentFormOpened((prev) => !prev);
     }, []);
+
     const id = useSelector((state) => state.user.me?.id); // optional chaining
     // const id = me && me.id;
 
@@ -39,8 +49,8 @@ const PostCard = ({ post }) => {
                 actions={[
                     <RetweetOutlined key="retweet"/>, 
                     liked
-                        ? <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onToggleLike} />
-                        : <HeartOutlined key="heart" onClick={onToggleLike}/>
+                        ? <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onUnlike} />
+                        : <HeartOutlined key="heart" onClick={onLike}/>
                     ,
                     <MessageOutlined key="comment" onClick={onToggleComment} />,
                     <Popover key="more" content={(
@@ -75,9 +85,9 @@ const PostCard = ({ post }) => {
                         renderItem={(item) => (
                             <li>
                                 <Comment
-                                    author={item.commentWriter}
-                                    avatar={<Avatar>{item.commentWriter[0]}</Avatar>}
-                                    content={item.commentDescription}
+                                    author={item.writer}
+                                    avatar={<Avatar>{item.writer[0]}</Avatar>}
+                                    content={item.description}
                                 />
                             </li>
                         )}

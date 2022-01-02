@@ -13,12 +13,18 @@ import {
     ADD_POST_SUCCESS, 
     ADD_POST_TO_ME, 
     generateDummyPost, 
+    LIKE_POST_FAILURE, 
+    LIKE_POST_REQUEST, 
+    LIKE_POST_SUCCESS, 
     LOAD_POST_FAILURE, 
     LOAD_POST_REQUEST, 
     LOAD_POST_SUCCESS, 
     REMOVE_POST_FAILURE, 
     REMOVE_POST_REQUEST, 
-    REMOVE_POST_SUCCESS 
+    REMOVE_POST_SUCCESS, 
+    UNLIKE_POST_FAILURE, 
+    UNLIKE_POST_REQUEST,
+    UNLIKE_POST_SUCCESS
 } from "../reducers/post";
 import { REMOVE_POST_OF_ME } from "../reducers/user";
 const cookies = new Cookies();
@@ -56,6 +62,68 @@ function* addPost(action) {
     }
 }
 
+function likePostAPI(data) {
+    const accessToken = cookies.get("accessToken");
+    const userEmail = cookies.get("userEmail");
+    const newObj = {
+        email : userEmail
+    };
+    return axios.patch(`/auth/post/${data}/like`, newObj,{
+        headers:{
+            'Authorization': `Bearer ${accessToken}`,
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true
+        }
+    });
+}
+
+function* likePost(action) {
+    try {
+        const result = yield call(likePostAPI, 1);
+        yield put({
+            type: LIKE_POST_SUCCESS,
+            data: result.data.result,
+        }); 
+    } catch (error) {
+        yield put({
+            type: LIKE_POST_FAILURE,
+            data: error.data 
+        })
+    }
+}
+
+function unlikePostAPI(data) {
+    const accessToken = cookies.get("accessToken");
+    const userEmail = cookies.get("userEmail");
+    const newObj = {
+        email : userEmail
+    };
+    return axios.delete(`/auth/post/${data}/like`, newObj,{
+        headers:{
+            'Authorization': `Bearer ${accessToken}`,
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true
+        }
+    });
+}
+
+function* unlikePost(action) {
+    try {
+        const result = yield call(unlikePostAPI, 1);
+        yield put({
+            type: UNLIKE_POST_SUCCESS,
+            data: result.data.result,
+        }); 
+    } catch (error) {
+        yield put({
+            type: UNLIKE_POST_FAILURE,
+            data: error.data 
+        })
+    }
+}
+
 function loadPostAPI(data) {
     return axios.get(`/api/posts?page=${data.pageNumber}&size=${data.pageSize}`);
 }
@@ -83,7 +151,6 @@ function* removePost(action) {
     try {
 
         delay(1000);
-        // const result = yield call(addPostAPI, action.data);
         const id = shortId.generate();
         yield put({
             type: REMOVE_POST_SUCCESS,
@@ -102,7 +169,6 @@ function* removePost(action) {
 }
 
 function addCommentAPI(data) {
-
     const accessToken = cookies.get("accessToken");
     const userEmail = cookies.get("userEmail");
     const newObj = {
@@ -122,18 +188,27 @@ function addCommentAPI(data) {
 function* addComment(action) {
     try {
         const result = yield call(addCommentAPI, action.data);
-        console.log("result :: ", result)
         yield put({
             type: ADD_COMMENT_SUCCESS,
-            data: action.data
+            data: result.data
         })
     } catch (error) {
+        console.log(error);
         yield put({
             type: ADD_COMMENT_FAILURE,
             data: error.data
         })
     }
 }
+
+function* watchLikePost(){
+    yield takeLatest(LIKE_POST_REQUEST, likePost); // 첫번째것만 하고 싶으면 takeLeading
+}
+
+function* watchUnlikePost(){
+    yield takeLatest(UNLIKE_POST_REQUEST, unlikePost); // 첫번째것만 하고 싶으면 takeLeading
+}
+
 
 function* watchAddPost(){
     yield takeLeading(ADD_POST_REQUEST, addPost); // 첫번째것만 하고 싶으면 takeLeading
@@ -153,6 +228,8 @@ function* watchAddComment(){
 
 export default function* postSaga(){
     yield all([
+        fork(watchLikePost), 
+        fork(watchUnlikePost), 
         fork(watchLoadPost), 
         fork(watchAddPost), 
         fork(watchRemovePost), 

@@ -16,6 +16,12 @@ export const initialState = {
     isFirstPage: true,
     mainPosts: [],
     imagePaths: [],
+    likePostLoading: false,
+    likePostDone: false,
+    likePostError: null,
+    unlikePostLoading: false,
+    unlikePostDone: false,
+    unlikePostError: null,
     loadPostLoading: false,
     loadPostDone: false,
     loadPostError: null,
@@ -49,6 +55,14 @@ export const generateDummyPost = (number) => Array(number).fill().map(() => ({
     }],
 }));
 
+export const LIKE_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LIKE_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LIKE_POST_FAILURE = 'LOAD_POST_FAILURE';
+
+export const UNLIKE_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const UNLIKE_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const UNLIKE_POST_FAILURE = 'LOAD_POST_FAILURE';
+
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
@@ -78,37 +92,50 @@ export const addComment = (data) => ({
     data
 })
 
-// const dummyPost = (data) => ({
-//     id: data.id,
-//     content: data.content,
-//     User: {
-//         id: 1,
-//         nickname: 'thelovedaejeon',
-//     },
-//     Images: [],
-//     Comments: [],
-// });
-
-// const dummyComment = (data) => ({
-//     id: shortId.generate(),
-//     content: data,
-//     User: {
-//         id: 1,
-//         nickname: 'thelovedaejeon',
-//     },
-// })
-
 //이전 상태를 action을 통해 다음 상태로 만들어 내는 함수 (불변성을 지키면서)
 const reducer = (state = initialState, action) => {
     return produce (state, (draft) => {
         switch (action.type){ 
+            case LIKE_POST_REQUEST:
+                draft.likePostLoading = true;
+                draft.likePostDone= false;
+                draft.likePostError= null;
+                break;
+            case LIKE_POST_SUCCESS: {
+                const post = draft.mainPosts.find((v) => v.postId === action.data.postId);
+                post.Likers.push({id : action.data.memberId})
+                draft.likePostLoading = false;
+                draft.likePostDone= true;
+                draft.mainPosts.unshift(action.data);
+                break;
+            }
+            case LIKE_POST_FAILURE:
+                draft.likePostLoading = false;
+                draft.likePostError = action.error;
+                break;
+            case UNLIKE_POST_REQUEST:
+                draft.unlikePostLoading = true;
+                draft.unlikePostDone= false;
+                draft.unlikePostError= null;
+                break;
+            case UNLIKE_POST_SUCCESS: {
+                const post = draft.mainPosts.find((v) => v.postId === action.data.postId);
+                post.Likers = post.Likers.filter((v) => v.postId !== action.data.memberId);
+                draft.unlikePostLoading = false;
+                draft.unlikePostDone= true;
+                draft.mainPosts.unshift(action.data);
+                break;
+            }
+            case UNLIKE_POST_FAILURE:
+                draft.unlikePostLoading = false;
+                draft.unlikePostError = action.error;
+                break;
             case LOAD_POST_REQUEST:
                 draft.loadPostLoading = true;
                 draft.loadPostDone= false;
                 draft.loadPostError= null;
                 break;
             case LOAD_POST_SUCCESS:
-                console.log("action.data.content :: ", action.data.content);
                 draft.loadPostLoading = false;
                 draft.loadPostDone= true;
                 draft.mainPosts = draft.mainPosts.concat(action.data.content);
@@ -160,23 +187,11 @@ const reducer = (state = initialState, action) => {
                 draft.addCommentError = null;
                 break;
             case ADD_COMMENT_SUCCESS:{
-                console.log("Addcomment :: ", action.data);
-                const post = draft.mainPosts.find((v) => v.id === action.data.postId);
-                post.commentList = {};
+                const post = draft.mainPosts.find((v) => v.postId === action.data.postId);
+                post.commentList.push(action.data);
                 draft.addCommentLoading = false;
                 draft.addCommentDone = true;
                 break;
-                // const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-                // const post = { ...state.mainPosts[postIndex] };
-                // post.Comments = [dummyComment(action.data.content), ...post.Comments];
-                // const mainPosts = [...state.mainPosts];
-                // mainPosts[postIndex] = post;
-                // return {
-                //   ...state,
-                //   mainPosts,
-                //   addCommentLoading: false,
-                //   addCommentDone: true,
-                // };
             }
             case ADD_COMMENT_FAILURE:
                 draft.addCommentLoading = false;

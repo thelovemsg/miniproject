@@ -3,6 +3,7 @@ package miniproject.demo.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import miniproject.demo.dto.CommentDto;
+import miniproject.demo.dto.ImageDto;
 import miniproject.demo.dto.PostDto;
 import miniproject.demo.dto.search.ContentSearchCondition;
 import miniproject.demo.entity.Comment;
@@ -51,8 +52,8 @@ public class PostService {
       Page<PostDto> postPages = contentRepositoryCustom.searchContentByApplyPage(condition, pageable);
       List<PostDto> postList = postPages.stream().map(post -> {
          System.out.println("post = " + post);
-         List<Comment> commentList = commentRepository.findAllCommentByContentId(post.getPostId());
-         List<Image> imageList = imageRepository.findAllImagesByContentId(post.getPostId());
+         List<CommentDto> commentList = commentRepository.findAllCommentByContentId(post.getPostId());
+         List<ImageDto> imageList = imageRepository.findAllImagesByContentId(post.getPostId());
          post.setCommentList(commentList);
          post.setImageList(imageList);
          return post;
