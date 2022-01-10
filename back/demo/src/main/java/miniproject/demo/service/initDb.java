@@ -49,13 +49,11 @@ public class initDb {
                 ContentInfo contentInfo1 = new ContentInfo(content, ContentInfoType.LIKE, member);
                 ContentInfo contentInfo2 = new ContentInfo(content, ContentInfoType.FOLLOWING, member);
                 ContentInfo contentInfo3 = new ContentInfo(content, ContentInfoType.FOLLOWED, member);
-                ContentInfo contentInfo4 = new ContentInfo(content, ContentInfoType.LIKE, member);
-                ContentInfo contentInfo5 = new ContentInfo(content, ContentInfoType.LIKED, member);
+                ContentInfo contentInfo4 = new ContentInfo(content, ContentInfoType.LIKED, member);
                 em.persist(contentInfo1);
                 em.persist(contentInfo2);
                 em.persist(contentInfo3);
                 em.persist(contentInfo4);
-                em.persist(contentInfo5);
             }
         }
     }

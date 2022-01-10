@@ -6,11 +6,7 @@ import miniproject.demo.dto.*;
 import miniproject.demo.dto.auth.MemberRequestDto;
 import miniproject.demo.dto.auth.MemberResponseDto;
 import miniproject.demo.entity.DefaultRes;
-import miniproject.demo.service.AuthService;
-import miniproject.demo.service.CommentService;
-import miniproject.demo.service.MemberService;
-import miniproject.demo.service.PostService;
-import org.apache.coyote.Response;
+import miniproject.demo.service.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +23,7 @@ public class AuthController {
     private final MemberService memberService;
     private final PostService postService;
     private final CommentService commentService;
+    private final ContentInfoService contentInfoService;
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponseDto> signup(@RequestBody MemberRequestDto memberRequestDto) {
@@ -45,6 +42,7 @@ public class AuthController {
 
     @PostMapping("/member")
     public ResponseEntity<MemberResponseDto> getLoginMemberInfo(@RequestBody MemberRequestDto memberRequestDto){
+        // 오류를 이용하면 이렇게 코드를 작성할 필요가 사실 없음.
         MemberDto memberInfo = memberService.findMemberInfo(memberRequestDto.getEmail());
         if(memberInfo.getEmail() == null){
             return ResponseEntity.ok(null);
@@ -55,25 +53,27 @@ public class AuthController {
 
     @PostMapping("/comment")
     public ResponseEntity<CommentDto> addComment(@RequestBody CommentDto commentDto){
-        CommentDto commentDto1 = commentService.addComment(commentDto);
-        System.out.println("commentDto1 = " + commentDto1);
-        return ResponseEntity.ok(commentDto1);
+        return ResponseEntity.ok(commentService.addComment(commentDto));
     }
 
     @PostMapping("/post")
     public ResponseEntity<PostDto> postContent(@RequestBody PostDto postDto){
-        PostDto postDto1 = postService.saveContent(postDto);
-        return ResponseEntity.ok(postDto1);
+        return ResponseEntity.ok(postService.saveContent(postDto));
+    }
+//    원인 `불명의 이유로 patch가 안돼서 post로 하겠음.
+//    @PatchMapping("/post/{postId}/like")
+//    public String testing(@PathVariable("postId") Long postId){
+//        return "ttesting!!";
+//    }
+    @PostMapping("/post/{postId}/like")
+    public ResponseEntity<LikersInfoDto> likeContent(@PathVariable("postId") Long postId, @RequestBody MemberRequestDto memberRequestDto){
+        LikersInfoDto likersInfoDto = contentInfoService.addLikeInfo(postId, memberRequestDto.getEmail());
+        return ResponseEntity.ok(likersInfoDto);
     }
 
-    @PatchMapping("/post/{postId}/like")
-    public String testing(@PathVariable("postId") Long postId){
-        return "ttesting!!";
-    }
-
-    @DeleteMapping("/post/{postId}/like")
-    public String deleteTesting(@PathVariable("postId") Long postId){
-        return "remove like testing";
+    @PostMapping("/post/{postId}/unlike")
+    public ResponseEntity<Long> unlikeContent(@PathVariable("postId") Long postId, @RequestBody MemberRequestDto memberRequestDto){
+        return ResponseEntity.ok(contentInfoService.deleteLikeInfo(postId, memberRequestDto.getEmail()));
     }
 
 }

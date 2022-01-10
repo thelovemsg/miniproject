@@ -73,6 +73,7 @@ public class MemberDto implements Serializable {
         List<Long> collect = postsDto.stream().map(postDto ->
                 postDto.getPostId()
         ).collect(Collectors.toList());
+        memberDto.setId(member.getId());
         memberDto.setPostDtoIds(collect);
         return memberDto;
     }

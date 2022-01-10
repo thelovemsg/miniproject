@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import miniproject.demo.entity.Comment;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
