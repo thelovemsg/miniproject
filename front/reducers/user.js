@@ -37,7 +37,10 @@ export const LOAD_MY_INFO_FAIL = 'LOAD_MY_INFO_FAIL';
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
-export const SIGN_UP_END = 'SIGN_UP_END';
+
+export const SET_LIKE_UNLIKE_INFO_REQUSET = 'SET_LIKE_UNLIKE_INFO_REQUSET';
+export const SET_LIKE_UNLIKE_INFO_SUCCESS = 'SET_LIKE_UNLIKE_INFO_SUCCESS';
+export const SET_LIKE_UNLIKE_INFO_FAILURE = 'SET_LIKE_UNLIKE_INFO_FAILURE';
 
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
@@ -48,6 +51,7 @@ export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 export const SIGN_UP_FAIL_DUPLICATE = 'SIGN_UP_FAIL_DUPLICATE';
 export const SIGN_UP_FAIL = 'SIGN_UP_FAIL';
+export const SIGN_UP_END = 'SIGN_UP_END';
 
 export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
 export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
@@ -94,7 +98,8 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
             break;
         case LOAD_MY_INFO_SUCCESS:
             draft.loadMyInfoLoading = false;
-            draft.me.postLength = action.data
+            draft.me.postLength = action.data.postIds;
+            draft.me.id = action.data.memberId;
             // draft.me.Followings.push({id : action.data});
             draft.loadMyInfoDone = true;
             break;
@@ -138,13 +143,13 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
         case LOG_IN_SUCCESS:    
             draft.logInLoading = false;
             draft.me.postLength = 0;
+            draft.me.id = action.data.memberId;
             draft.logInDone = true;
             draft.loadMyInfoDone = true;
             break;
         case LOG_IN_FAILURE:
             draft.logInLoading = false;
             draft.logInError = action.data;
-            draft.logIn
             break;
         case LOG_OUT_REQUEST:
             draft.logOutLoading = true;

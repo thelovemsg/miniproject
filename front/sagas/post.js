@@ -37,10 +37,10 @@ function addPostAPI(data) {
     }
     return axios.post('/auth/post', newObj,{
         headers:{
-            'Authorization': `Bearer ${accessToken}`,
+            "Authorization": `Bearer ${accessToken}`,
             "Content-Type": "application/json"
         }
-    });
+    }).then(res => res.data);
 }
 
 function* addPost(action) {
@@ -68,22 +68,37 @@ function likePostAPI(data) {
     const newObj = {
         email : userEmail
     };
-    return axios.patch(`/auth/post/${data}/like`, newObj,{
+    console.log("data :", data);
+    // return axios.patch(`/auth/post/${data}/like`, newObj,{
+    //     headers:{
+    //         "Authorization": `Bearer ${accessToken}`,
+    //         "Content-Type": "application/json",
+    //     },
+    //     withCredentials : true
+    // });
+    return axios.post(`/auth/post/${data}/like`, newObj,{
         headers:{
-            'Authorization': `Bearer ${accessToken}`,
-            "Access-Control-Allow-Origin": "*",
+            "Authorization": `Bearer ${accessToken}`,
             "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": true
-        }
+        },
+        withCredentials : true
     });
 }
 
+/**
+ * 그외에 좋아요 수를 보고 싶으면 수만 계산해서 가져오면 된다. 
+ * 문제는 like를 클릭했는지, 안했는지 로그인 하기 전까지는 모른다는 점이다. 
+ * 그러므로 로그인에 성공을 하면 게시글들을 보고 각각의 post에 대해 좋아요를 체크해줘야 한다. 
+ */
 function* likePost(action) {
     try {
-        const result = yield call(likePostAPI, 1);
+        const result = yield call(likePostAPI, action.data);
         yield put({
             type: LIKE_POST_SUCCESS,
-            data: result.data.result,
+            data: {
+                postId : action.data,
+                result : result.data
+            },
         }); 
     } catch (error) {
         yield put({
@@ -99,22 +114,23 @@ function unlikePostAPI(data) {
     const newObj = {
         email : userEmail
     };
-    return axios.delete(`/auth/post/${data}/like`, newObj,{
+    return axios.post(`/auth/post/${data}/unlike`, newObj,{
         headers:{
-            'Authorization': `Bearer ${accessToken}`,
-            "Access-Control-Allow-Origin": "*",
+            "Authorization": `Bearer ${accessToken}`,
             "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": true
         }
     });
 }
 
 function* unlikePost(action) {
     try {
-        const result = yield call(unlikePostAPI, 1);
+        const result = yield call(unlikePostAPI, action.data);
         yield put({
             type: UNLIKE_POST_SUCCESS,
-            data: result.data.result,
+            data: {
+                postId : action.data,
+                result : result.data
+            },
         }); 
     } catch (error) {
         yield put({
@@ -136,6 +152,7 @@ function* loadPost(action) {
             data: result.data.result,
         }); 
     } catch (error) {
+        console.log(error);
         yield put({
             type: LOAD_POST_FAILURE,
             data: error.data 
@@ -150,8 +167,6 @@ function removePostAPI(data) {
 function* removePost(action) {
     try {
 
-        delay(1000);
-        const id = shortId.generate();
         yield put({
             type: REMOVE_POST_SUCCESS,
             data: action.data

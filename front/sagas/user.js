@@ -22,14 +22,14 @@ import {
     LOAD_MY_INFO_REQUEST,
     LOAD_MY_INFO_SUCCESS,
     LOAD_MY_INFO_FAIL
-} from "../reducers/user";
+} from "../reducers/user";``
+var jwt = require('jsonwebtoken');
 import { warningMsg } from "../utils/sweetAlertUtils";
 const cookies = new Cookies();
 
 function loadMyInfoAPI() {
     const accessToken = cookies.get("accessToken");
     const userEmail = cookies.get("userEmail");
-    // return axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     const data = {
         email: userEmail
     }
@@ -48,7 +48,10 @@ function* loadMyInfo(action) {
         if(response.data != ""){
             yield put({
                 type: LOAD_MY_INFO_SUCCESS,
-                data: response.data.result.postDtoIds
+                data: {
+                    postIds : response.data.result.postDtoIds,
+                    memberId : response.data.result.id,
+                }
             });
         }
     } catch (error) {
@@ -72,17 +75,24 @@ function* login(action) {
                 type: LOG_IN_FAILURE,
             })
         }else{
+            let base64Payload = result.data.accessToken.split('.')[1]; //value 0 -> header, 1 -> payload, 2 -> VERIFY SIGNATURE var payload = Buffer.from(base64Payload, 'base64'); var result = JSON.parse(payload.toString()) console.log(result);
+            let payload = Buffer.from(base64Payload, 'base64'); 
+            let payloadResult = JSON.parse(payload.toString()); 
+            // console.log(payloadResult);
             cookies.set("accessToken", result.data.accessToken,{ path: '/' });
             cookies.set("refreshToken", result.data.accessToken,{ path: '/' });
+            // cookies.set("memberId", payloadResult.sub, {path:'/'});
             cookies.set("userEmail", action.data.email);
             yield put({
                 type: LOG_IN_SUCCESS,
+                data: {memberId : payloadResult.sub},
             });
             const response = yield call(loadMyInfoAPI);
+            console.log("response : ", response);
             if(response.data != ""){
                 yield put({
                     type: LOAD_MY_INFO_SUCCESS,
-                    data: response.data.result.postDtoIds
+                    data: {postIds:response.data.result.postDtoIds}
                 });
             }
         }
@@ -113,8 +123,7 @@ function* logout() {
 }
 
 function signUpAPI(data) {
-    let test = axios.post('/auth/signup', data);
-    return test;
+    return axios.post('/auth/signup', data);
 }
 
 function* signUp(action) {
@@ -205,6 +214,7 @@ function* watchSignUp(){
 
 export default function* userSaga() {
     yield all([
+        fork(watchLoadMyInfo),
         fork(watchLoadMyInfo),
         fork(watchFollow),
         fork(watchUnfollow),

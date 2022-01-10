@@ -9,20 +9,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
-import { REMOVE_POST_REQUEST } from '../../../reducers/post';
+import { LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST } from '../../../reducers/post';
 import FollowButton from './FollowButton';
-
+import Cookies from 'universal-cookie';
 const PostCard = ({ post }) => {
     const dispatch = useDispatch();
     const { removePostLoading } = useSelector((state) => state.post);
-    const [liked, setLiked] = useState(false);
     const [commentFormOpend, setCommentFormOpened] = useState(false); 
+    
     const onLike = useCallback(() => {
         dispatch({
             type: LIKE_POST_REQUEST,
             data: post.postId
         })
     }, []);
+
     const onUnlike = useCallback(() => {
         dispatch({
             type: UNLIKE_POST_REQUEST,
@@ -32,16 +33,28 @@ const PostCard = ({ post }) => {
     const onToggleComment = useCallback(() => {
         setCommentFormOpened((prev) => !prev);
     }, []);
-
-    const id = useSelector((state) => state.user.me?.id); // optional chaining
+    console.log("========================================")
+    const id = useSelector((state) => state.user.me.id); // optional chaining
+    console.log("id in postCard.js :: ", id);
     // const id = me && me.id;
-
+    console.log("post.likers :: ", post.likers);
+    const liked = post.likers.find((v) => {
+        if(v.memberId === id) {
+            console.log(v.memberId);
+            return true
+        }else{
+            console.log("v.memberId :: ", v.memberId);
+            console.log("id :: ", id);
+        }
+    }) || false;
+    console.log("liked :: ", liked);
     const onRemovePost = useCallback(() => {
         dispatch({
             type: REMOVE_POST_REQUEST,
             data: post.id
         })
     }, []);
+    console.log("post :: ", post);
     return (
        <div>
            <Card key={post.postId}
@@ -55,7 +68,7 @@ const PostCard = ({ post }) => {
                     <MessageOutlined key="comment" onClick={onToggleComment} />,
                     <Popover key="more" content={(
                         <Button.Group>
-                            {id && post.User.id === id ? (
+                            {id && post.memberId === id ? (
                             <>
                                 <Button>수정</Button>
                                 <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>삭제</Button>
@@ -66,7 +79,7 @@ const PostCard = ({ post }) => {
                         <EllipsisOutlined />
                     </Popover>
                 ]}
-                extra={ id && <FollowButton post={post} />}
+                // extra={ id && <FollowButton post={post} />}
             >
             <Card.Meta
                 avatar={<Avatar>{post.writer[0]}</Avatar>}
