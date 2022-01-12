@@ -3,15 +3,13 @@ import { jsx, css } from '@emotion/react'
 import { EllipsisOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, RetweetOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import { Form, Input, Button, Card, Popover, Avatar, List, Comment } from 'antd';
-import ButtonGroup from 'antd/lib/button/button-group';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
-import { LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST } from '../../../reducers/post';
-import FollowButton from './FollowButton';
 import Cookies from 'universal-cookie';
+import { LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST } from '../../../reducers/post';
 const PostCard = ({ post }) => {
     const dispatch = useDispatch();
     const { removePostLoading } = useSelector((state) => state.post);
@@ -30,31 +28,27 @@ const PostCard = ({ post }) => {
             data: post.postId
         })
     }, []);
+
     const onToggleComment = useCallback(() => {
         setCommentFormOpened((prev) => !prev);
     }, []);
-    console.log("========================================")
-    const id = useSelector((state) => state.user.me.id); // optional chaining
-    console.log("id in postCard.js :: ", id);
+    
+    const id = useSelector((state) => state.user.me?.id); // optional chaining
     // const id = me && me.id;
-    console.log("post.likers :: ", post.likers);
     const liked = post.likers.find((v) => {
-        if(v.memberId === id) {
-            console.log(v.memberId);
+        if(v.memberId == id) {
             return true
-        }else{
-            console.log("v.memberId :: ", v.memberId);
-            console.log("id :: ", id);
         }
     }) || false;
-    console.log("liked :: ", liked);
+    customElements
     const onRemovePost = useCallback(() => {
         dispatch({
             type: REMOVE_POST_REQUEST,
             data: post.id
         })
     }, []);
-    console.log("post :: ", post);
+
+    console.log("===================");
     return (
        <div>
            <Card key={post.postId}

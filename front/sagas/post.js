@@ -1,5 +1,4 @@
 import { delay, fork, all, takeLatest, put, call, takeLeading, throttle, debounce, take} from "redux-saga/effects";
-import shortId from "shortid";
 import axios from 'axios';
 // import Axios from 'axios';
 // import qs from 'query-string';
@@ -11,7 +10,6 @@ import {
     ADD_POST_FAILURE, 
     ADD_POST_REQUEST, 
     ADD_POST_SUCCESS, 
-    ADD_POST_TO_ME, 
     generateDummyPost, 
     LIKE_POST_FAILURE, 
     LIKE_POST_REQUEST, 
@@ -26,7 +24,8 @@ import {
     UNLIKE_POST_REQUEST,
     UNLIKE_POST_SUCCESS
 } from "../reducers/post";
-import { REMOVE_POST_OF_ME } from "../reducers/user";
+import { warningMsg } from "../utils/sweetAlertUtils";
+import {ADD_POST_TO_ME, REMOVE_POST_OF_ME} from "../reducers/user";
 const cookies = new Cookies();
 function addPostAPI(data) {
     const accessToken = cookies.get("accessToken");
@@ -46,15 +45,17 @@ function addPostAPI(data) {
 function* addPost(action) {
     try {
         const result = yield call(addPostAPI, action.data);
+        console.log("result after add post :: ", result);
         yield put({
             type: ADD_POST_SUCCESS,
-            data: result.data,
+            data: result,
         })
         yield put({
             type: ADD_POST_TO_ME,
-            data: result.data.postId,
+            data: result.postId,
         })
     } catch (error) {
+        console.log(error);
         yield put({
             type: ADD_POST_FAILURE,
             data: error.data
@@ -68,7 +69,6 @@ function likePostAPI(data) {
     const newObj = {
         email : userEmail
     };
-    console.log("data :", data);
     // return axios.patch(`/auth/post/${data}/like`, newObj,{
     //     headers:{
     //         "Authorization": `Bearer ${accessToken}`,
@@ -92,7 +92,9 @@ function likePostAPI(data) {
  */
 function* likePost(action) {
     try {
+        console.log("postid for like post  :: ", action.data);
         const result = yield call(likePostAPI, action.data);
+        console.log("likePostSuccess!!", result);
         yield put({
             type: LIKE_POST_SUCCESS,
             data: {
@@ -101,6 +103,7 @@ function* likePost(action) {
             },
         }); 
     } catch (error) {
+        warningMsg("이런! 로그인이 필요합니다!");
         yield put({
             type: LIKE_POST_FAILURE,
             data: error.data 
@@ -147,6 +150,7 @@ function loadPostAPI(data) {
 function* loadPost(action) {
     try {
         const result = yield call(loadPostAPI, action.data);
+        console.log("load post success :: ", result);
         yield put({
             type: LOAD_POST_SUCCESS,
             data: result.data.result,

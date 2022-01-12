@@ -12,6 +12,7 @@ const Home = () => {
     const { pageable, mainPosts, isLastPage, loadPostLoading } = useSelector((state) => state.post);
     
     useEffect(() => {
+        console.log("load my info in index.js")
         dispatch({
             type: LOAD_MY_INFO_REQUEST
         });

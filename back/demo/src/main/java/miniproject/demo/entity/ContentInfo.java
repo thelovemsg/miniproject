@@ -1,7 +1,9 @@
 package miniproject.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import miniproject.demo.enums.ContentInfoType;
 
 import javax.persistence.*;
@@ -11,7 +13,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Data
 @Table(name="contentInfo")
-@EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
 public class ContentInfo extends BaseTimeEntity{
 
     @Id @GeneratedValue
@@ -20,10 +22,12 @@ public class ContentInfo extends BaseTimeEntity{
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "content_id")
+    @JsonIgnore
     private Content contentInfo_content;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member_contentInfo;
 
     @Enumerated(EnumType.STRING)

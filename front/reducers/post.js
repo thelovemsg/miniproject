@@ -83,9 +83,6 @@ export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
-export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
-export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
-
 export const addPost = (data) => ({
     type: ADD_POST_REQUEST,
     data
@@ -106,11 +103,9 @@ const reducer = (state = initialState, action) => {
                 draft.likePostError= null;
                 break;
             case LIKE_POST_SUCCESS: {
-                console.log("action :: ", action);
                 const post = draft.mainPosts.find((v) => v.postId === action.data.postId);
-                console.log("action.data.result :: ",action.data.result);
                 post.likers.push(action.data.result);
-                console.log("post.likers in action :: ", post.likers);
+                console.log("post.likers :: ", post.likers);
                 draft.likePostLoading = false;
                 draft.likePostDone= true;
                 break;
@@ -137,7 +132,7 @@ const reducer = (state = initialState, action) => {
                 break;
             case LOAD_POST_REQUEST:
                 draft.loadPostLoading = true;
-                draft.loadPostDone= false;
+                draft.loadPostDone= false;  
                 draft.loadPostError= null;
                 break;
             case LOAD_POST_SUCCESS:

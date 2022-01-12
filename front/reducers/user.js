@@ -80,15 +80,6 @@ export const logoutRequestAction = (data) => {
     }
 }
 
-// const dummyUser = (data) => ({
-//     ...data,
-//     nickname: '선준찡',
-//     id: 1,
-//     Posts: [{ id: 1 } ],
-//     Followings: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
-//     Followers: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
-// });
-
 const reducer = (state = initialState, action) => produce (state, (draft) => {
     switch (action.type){
         case LOAD_MY_INFO_REQUEST:
@@ -204,26 +195,29 @@ const reducer = (state = initialState, action) => produce (state, (draft) => {
             draft.changeNicknameError = action.error;
             break;
         case ADD_POST_TO_ME:
-            console.log(action);
-            // draft.me.Posts.unshift({ id: action.data });
+            draft.me.postLength.push(action.data);
             break;
-            // return {
-            //   ...state,
-            //   me: {
-            //     ...state.me,
-            //     Posts: [{ id: action.data }, ...state.me.Posts],
-            //   },
-            // };
-        case REMOVE_POST_OF_ME:
-            draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
-            break;
-            // return {
-            //   ...state,
-            //   me: {
-            //     ...state.me,
-            //     Posts: state.me.Posts.filter((v) => v.id !== action.data),
-            //   },
-            // };
+        // case ADD_POST_TO_ME:
+        //     console.log(action);
+        //     // draft.me.Posts.unshift({ id: action.data });
+        //     break;
+        //     // return {
+        //     //   ...state,
+        //     //   me: {
+        //     //     ...state.me,
+        //     //     Posts: [{ id: action.data }, ...state.me.Posts],
+        //     //   },
+        //     // };
+        // case REMOVE_POST_OF_ME:
+        //     draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
+        //     break;
+        //     // return {
+        //     //   ...state,
+        //     //   me: {
+        //     //     ...state.me,
+        //     //     Posts: state.me.Posts.filter((v) => v.id !== action.data),
+        //     //   },
+        //     // };
         default:
             break;
     }

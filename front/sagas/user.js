@@ -45,8 +45,6 @@ function loadMyInfoAPI() {
 function* loadMyInfo(action) {
     try {
         const response = yield call(loadMyInfoAPI);
-        console.log("response :: ", response);
-        console.log("response.data.result.id :: ", response.data.result.id);
         if(response.data != ""){
             yield put({
                 type: LOAD_MY_INFO_SUCCESS,
@@ -83,18 +81,19 @@ function* login(action) {
             // console.log(payloadResult);
             cookies.set("accessToken", result.data.accessToken,{ path: '/' });
             cookies.set("refreshToken", result.data.accessToken,{ path: '/' });
-            // cookies.set("memberId", payloadResult.sub, {path:'/'});
+            cookies.set("memberId", payloadResult.sub, {path:'/'});
             cookies.set("userEmail", action.data.email);
             yield put({
                 type: LOG_IN_SUCCESS,
                 data: {memberId : payloadResult.sub},
             });
             const response = yield call(loadMyInfoAPI);
-            console.log("response : ", response);
             if(response.data != ""){
                 yield put({
                     type: LOAD_MY_INFO_SUCCESS,
-                    data: {postIds:response.data.result.postDtoIds}
+                    data: {
+                        postIds : response.data.result.postDtoIds,
+                    }
                 });
             }
         }

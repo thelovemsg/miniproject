@@ -63,7 +63,6 @@ const AppLayout = ({ children }) => {
                                 <ChattingForm/>
                             </div>
                         </Col>
-                                
                     </Row>
                 </Content>
             </Layout>

@@ -67,6 +67,7 @@ public class AuthController {
 //    }
     @PostMapping("/post/{postId}/like")
     public ResponseEntity<LikersInfoDto> likeContent(@PathVariable("postId") Long postId, @RequestBody MemberRequestDto memberRequestDto){
+        System.out.println("postId = " + postId);
         LikersInfoDto likersInfoDto = contentInfoService.addLikeInfo(postId, memberRequestDto.getEmail());
         return ResponseEntity.ok(likersInfoDto);
     }
